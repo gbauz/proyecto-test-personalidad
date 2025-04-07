@@ -1,22 +1,12 @@
-// src/App.jsx
-import { useEffect, useState } from 'react';
+import MainLayout from '@layouts/MainLayout'
+import AppRoutes from '@router/index' // 👈 Importás AppRoutes
 
-function App() {
-    const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        fetch('/api/message')
-            .then((response) => response.json())
-            .then((data) => setMessage(data.message))
-            .catch((error) => console.error('Error fetching message:', error));
-    }, []);
-
-    return (
-        <div>
-            <h1>Aplicación Monolítica en React y Express</h1>
-            <p>{message}</p>
-        </div>
-    );
+const App = () => {
+  return (
+    <MainLayout>
+      <AppRoutes /> {/* 👈 Usás AppRoutes acá */}
+    </MainLayout>
+  )
 }
 
-export default App;
+export default App
