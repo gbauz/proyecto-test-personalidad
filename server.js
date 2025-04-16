@@ -10,11 +10,11 @@ app.get('/api/message', (req, res) => {
 });
 
 // Middleware para servir archivos estáticos
-app.use(express.static(path.join(process.cwd(), 'client/dist')));
+app.use(express.static(path.join(process.cwd(), 'my-page/dist')));
 
 // Manejar todas las demás rutas para el SPA (React)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'client/dist', 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'my-page/dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
