@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 👈 importar
 import { HiMenu } from 'react-icons/hi';
 
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate(); // 👈 hook para redirección
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -17,6 +19,13 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // 👇 Función para cerrar sesión y redirigir
+  const handleLogout = () => {
+    // Aquí podrías limpiar tokens, contexto, etc.
+    setDropdownOpen(false);
+    navigate('/login');
+  };
 
   return (
     <nav className="bg-black border-b border-gray-800 shadow-md px-4">
@@ -38,8 +47,6 @@ const Header = () => {
           <button
             type="button"
             className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-600"
-            id="user-menu-button"
-            aria-expanded={isDropdownOpen}
             onClick={() => setDropdownOpen(!isDropdownOpen)}
           >
             <span className="sr-only">Open user menu</span>
@@ -50,7 +57,7 @@ const Header = () => {
             />
           </button>
 
-          {/* Dropdown menu with transition */}
+          {/* Dropdown */}
           <div
             className={`absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg transform transition-all duration-200 origin-top-right ${
               isDropdownOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
@@ -70,12 +77,12 @@ const Header = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Cerrar sesión
-                </a>
+                </button>
               </li>
             </ul>
           </div>

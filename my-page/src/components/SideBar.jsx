@@ -1,39 +1,49 @@
+import { Link } from "react-router-dom";
+import { Home, BarChart2, Users } from "lucide-react"; // o cualquier librería de íconos
+
 const SideBar = () => {
-    return (
-      <div
-        id="drawer-navigation"
-        className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-gray-900 text-white"
-        tabIndex="-1"
-        aria-labelledby="drawer-navigation-label"
-      >
-        <h5 id="drawer-navigation-label" className="text-lg font-semibold uppercase text-gray-400 mb-4">
-          Menu
-        </h5>
+  return (
+    <aside
+      id="drawer-navigation"
+      className="fixed top-0 left-0 z-40 w-64 h-screen p-6 bg-white border-r border-gray-200 text-gray-800 transition-transform -translate-x-full lg:translate-x-0"
+      tabIndex="-1"
+      aria-labelledby="drawer-navigation-label"
+    >
+      <h1 className="text-2xl font-extrabold text-orange-600 mb-10">Humanalyze</h1>
+
+      <nav>
         <ul className="space-y-2">
           <li>
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
-              Dashboard
-            </a>
+            <Link
+              to="/"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
+            >
+              <Home size={20} />
+              Home
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
-              Usuarios
-            </a>
+            <Link
+              to="/report"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
+            >
+              <BarChart2 size={20} />
+              Report
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
-              Productos
-            </a>
-          </li>
-          <li>
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
-              Reportes
-            </a>
+            <Link
+              to="/usuarios"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
+            >
+              <Users size={20} />
+              User Management
+            </Link>
           </li>
         </ul>
-      </div>
-    );
-  };
-  
-  export default SideBar;
-  
+      </nav>
+    </aside>
+  );
+};
+
+export default SideBar;
