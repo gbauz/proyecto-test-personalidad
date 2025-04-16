@@ -13,6 +13,8 @@ const Settings = () => {
     <h1 className="font-orbiter font-semibold text-[56px] leading-[100%] text-[#1C1515]">
   Powerful Features to Boost Your <span className="text-[#EA4711]">Productivity</span>
 </h1>
+<h1 className="font-orbiter text-2xl text-[#1C1515]">Hola mundo con TASA Orbiter</h1>
+
     </div>   
     
     
