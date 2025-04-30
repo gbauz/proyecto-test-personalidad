@@ -1,22 +1,16 @@
 import express from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import authRoutes from './my-page/backend/routes/authRoutes.js'; // 👈 agrega extensión .js
 
 const app = express();
-const PORT = 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Ruta de la API
-app.get('/api/message', (req, res) => {
-    res.json({ message: 'Hola desde el backend de Express!' });
-});
+app.use(express.json());
+app.use('/api/auth', authRoutes);
 
-// Middleware para servir archivos estáticos
-app.use(express.static(path.join(process.cwd(), 'my-page/dist')));
-
-// Manejar todas las demás rutas para el SPA (React)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'my-page/dist', 'index.html'));
-});
-
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Servidor Express escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor Express escuchando en http://localhost:${PORT}`);
 });

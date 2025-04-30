@@ -8,8 +8,12 @@
     "serve": "vite serve"
   },
   "dependencies": {
+    "@prisma/client": "^6.6.0",
     "base-project": "^0.2.1",
+    "bcryptjs": "^3.0.2",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
