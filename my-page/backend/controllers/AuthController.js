@@ -61,3 +61,25 @@ export const login = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
+
+
+export const getRoles = async (req, res) => {
+  try {
+    const roles = await prisma.role.findMany({
+      select: {
+        id: true,
+        name: true
+      }
+    });
+
+    const formatted = roles.map(role => ({
+      value: role.id,
+      label: role.name
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'No se pudieron obtener los roles' });
+  }
+};

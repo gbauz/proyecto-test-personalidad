@@ -2,6 +2,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 import Dashboard from '../Features/Dashboard/Dashboard';
 import Settings from '../Features/Settings/Settings';
+import Register from '../Features/Auth/Register';
 
 
 
@@ -11,10 +12,11 @@ const PrivateRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/dashboard"
+        path="/"
         element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}
       >
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='register' element={< Register />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

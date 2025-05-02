@@ -15,7 +15,7 @@ const SideBar = () => {
         <ul className="space-y-2">
           <li>
             <Link
-              to="/"
+              to="/dashboard"
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
             >
               <Home size={20} />
@@ -33,7 +33,7 @@ const SideBar = () => {
           </li>
           <li>
             <Link
-              to="/usuarios"
+              to="/register"
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
             >
               <Users size={20} />

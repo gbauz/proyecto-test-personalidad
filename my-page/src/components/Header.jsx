@@ -24,6 +24,8 @@ const Header = () => {
   const handleLogout = () => {
     // Aquí podrías limpiar tokens, contexto, etc.
     setDropdownOpen(false);
+    localStorage.removeItem("persist:root")
+    localStorage.removeItem("token")
     navigate('/login');
   };
 
