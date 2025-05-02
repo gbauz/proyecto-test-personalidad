@@ -3,21 +3,23 @@ import MainLayout from '../components/MainLayout';
 import Dashboard from '../Features/Dashboard/Dashboard';
 import Settings from '../Features/Settings/Settings';
 
-// Simulación de auth (debes reemplazar por tu lógica real)
-const isAuthenticated = true;
+
 
 const PrivateRoutes = () => {
+  const isAuthenticated = !!localStorage.getItem('token');
+
   return (
     <Routes>
       <Route
-        path="/"
+        path="/dashboard"
         element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}
       >
-        <Route index element={<Dashboard />} />
+        <Route path='dashboard' element={<Dashboard />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );
+
 };
 
 export default PrivateRoutes;
