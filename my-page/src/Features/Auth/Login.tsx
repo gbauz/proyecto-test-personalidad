@@ -34,11 +34,11 @@ const Login = () => {
       <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 bg-white shadow-xl rounded-xl overflow-hidden">
         {/* Izquierda */}
         <div className="relative bg-black text-white p-10 flex flex-col justify-center">
-          <h2 className="text-3xl font-extrabold mb-4">Humanalyze</h2>
-          <p className="text-xl font-semibold mb-6 leading-snug">
+          <h2 className="text-white mb-4" style={{ color: '#EA4711' }}>Humanize</h2>
+          <p className="text-white mb-4" style={{ color: '#FFFFFF' }}>
             ¿Listo para descubrir tu perfil de personalidad?
           </p>
-          <p className="text-sm text-gray-300 mb-6">
+          <p className="text-white mb-4" style={{ color: '#FFFFFF' }}>
             Evalúa, conecta y contrata con inteligencia emocional.
           </p>
           <img
