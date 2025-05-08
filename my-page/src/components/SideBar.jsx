@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import { Home, BarChart2, Users } from "lucide-react"; // o cualquier librería de íconos
+import { useEffect, useState } from "react";
+
 
 const SideBar = () => {
+  const [rol, setRol] = useState("")
+
+  useEffect(() => {
+    const rolName = localStorage.getItem("rolName");
+    setRol(rolName);
+  }, []);
+
+
+
   return (
     <aside
       id="drawer-navigation"
@@ -31,7 +42,8 @@ const SideBar = () => {
               Report
             </Link>
           </li>
-          <li>
+          {rol != "Postulante" && (
+            <li>
             <Link
               to="/register"
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
@@ -40,6 +52,8 @@ const SideBar = () => {
               User Management
             </Link>
           </li>
+          )}
+          
         </ul>
       </nav>
     </aside>

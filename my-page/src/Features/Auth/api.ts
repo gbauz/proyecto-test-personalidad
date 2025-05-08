@@ -5,16 +5,24 @@ export interface LoginPayload {
   password: string;
 }
 
-export interface LoginResponse {
+
+export interface UserLoginResponse {
+  nombre: string;
+  roleName: string;
+}
+export interface LoginResponse  {
   message: string;
   token: string;
+  user: UserLoginResponse
 }
+
+
 
 export interface RegisterPayload {
   name: string,
   email: string,
   password: string,
-  roleId: number,
+  roleId?: number,
 }
 
 export interface RoleOption {
@@ -23,19 +31,21 @@ export interface RoleOption {
 }
 
 
-const API_URL = "http://localhost:3001/api/auth";
+const API_URL = "http://localhost:3001/api";
+const AUTH_URL = "auth";
+const BASE_URL_AUTH = `${API_URL}/${AUTH_URL}`
 
 export const loginUser = async (data: LoginPayload): Promise<LoginResponse> => {
-  const response = await axios.post(`${API_URL}/login`, data);
+  const response = await axios.post(`${BASE_URL_AUTH}/login`, data);
   return response.data;
 };
 
 export const registerUser = async (data: RegisterPayload): Promise<{ message: string }> => {
-  const response = await axios.post(`${API_URL}/register`, data);
+  const response = await axios.post(`${BASE_URL_AUTH}/register`, data);
   return response.data;
 };
 
 export const fetchRoles = async (): Promise<RoleOption[]> => {
-  const res = await axios.get(`${API_URL}/roles`);
+  const res = await axios.get(`${BASE_URL_AUTH}/roles`);
   return res.data;
 };

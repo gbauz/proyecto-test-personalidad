@@ -3,7 +3,7 @@ import { LoginPayload, loginUser } from "./api";
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [form, setForm] = useState<LoginPayload>({ email: "", password: "" });
+  const [form, setForm] = useState<LoginPayload>({ email: "", password: ""});
   const [error, setError] = useState("");
   const [token, setToken] = useState("");
   const navigate = useNavigate();
@@ -16,11 +16,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const result = await loginUser(form);
-      setToken(result.token);
+      // setToken(result.token);
+
   
       // Guarda el token si quieres mantener sesión
       localStorage.setItem('token', result.token);
-  
+      localStorage.setItem('nombre', result.user.nombre)
+      localStorage.setItem('rolName', result.user.roleName)
+      
       // Redirige al dashboard
       navigate('/dashboard');
     } catch (err: any) {
@@ -28,6 +31,10 @@ const Login = () => {
       setError('Credenciales incorrectas o error del servidor');
     }
   };
+
+  const redirir = () => {
+    navigate('/registerPublic')
+  }
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4 py-12">
@@ -93,8 +100,16 @@ const Login = () => {
               <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
                 Recordarme
               </label>
+              <input
+                id="register"
+                type="button"
+                onClick={redirir}
+                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+              />
+              <label htmlFor="register" className="ml-2 text-sm text-gray-600">
+              <strong><u>Registrar</u></strong>
+              </label>
             </div>
-
             <button
               type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition duration-300"

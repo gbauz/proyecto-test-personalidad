@@ -6,14 +6,17 @@ const prisma = new PrismaClient();
 const SECRET_KEY = 'tu_clave_secreta'; // ¡Luego pásalo a process.env.SECRET_KEY!
 
 export const register = async (req, res) => {
-  const { email, password, name, roleId } = req.body;
-
+  let { email, password, name, roleId } = req.body;
+  console.log("id",roleId)
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: 'El usuario ya existe' });
     }
+    const DEFAULT_ROLE_ID = 4;
 
+    roleId = (roleId === undefined || roleId === null || roleId === 0) ? DEFAULT_ROLE_ID : roleId;
+ 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
@@ -39,7 +42,9 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email },
+                 include: {role: true}                                        
+    });
     if (!user) {
       return res.status(400).json({ error: 'Credenciales incorrectas' });
     }
@@ -52,10 +57,16 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, role: user.roleId },
       SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '10h' }
     );
 
-    res.json({ message: 'Login exitoso', token });
+    res.json({ message: 'Login exitoso',
+               token,
+              user: {
+                nombre: user.name,
+                roleName: user.role.name,
+              }
+              });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error en el servidor' });
