@@ -1,26 +1,38 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
 import Dashboard from '../Features/Dashboard/Dashboard';
 import Settings from '../Features/Settings/Settings';
 import Register from '../Features/Auth/Register';
 
-
 const PrivateRoutes = () => {
-  const isAuthenticated = !!localStorage.getItem('token');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const token = localStorage.getItem('token');
+      setIsAuthenticated(!!token);
+    };
+
+    // Escucha cuando el login cambia (sin contexto)
+    window.addEventListener('authChanged', handleAuthChange);
+
+    // Limpieza del evento cuando el componente se desmonta
+    return () => window.removeEventListener('authChanged', handleAuthChange);
+  }, []);
 
   return (
     <Routes>
       <Route
         path="/"
-        element={isAuthenticated ? <MainLayout /> : <Navigate to="/landing" />}
+        element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}
       >
-        <Route path='dashboard' element={<Dashboard />} />
-        <Route path='register' element={< Register />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="register" element={<Register />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );
-
 };
 
 export default PrivateRoutes;

@@ -3,39 +3,48 @@ import { LoginPayload, loginUser } from "./api";
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [form, setForm] = useState<LoginPayload>({ email: "", password: ""});
+  const [form, setForm] = useState<LoginPayload>({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [token, setToken] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value }); // 🔧 Aquí estaba el error
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
       const result = await loginUser(form);
-      // setToken(result.token);
 
-  
-      // Guarda el token si quieres mantener sesión
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('nombre', result.user.nombre)
-      localStorage.setItem('rolName', result.user.roleName)
-      
-      // Redirige al dashboard
+      if (!result.isSuccess) {
+        setError(result.message || "Credenciales incorrectas");
+        return;
+      }
+
+      const { token, user } = result.data;
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('nombre', user.nombre);
+      localStorage.setItem('rolName', user.roleName);
+
+      window.dispatchEvent(new Event('authChanged'));
       navigate('/dashboard');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError('Credenciales incorrectas o error del servidor');
+      setError("Error de servidor o credenciales inválidas.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const redirir = () => {
-    navigate('/registerPublic')
-  }
-  
+  const redirigir = () => {
+    navigate('/registerPublic');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4 py-12">
       <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 bg-white shadow-xl rounded-xl overflow-hidden">
@@ -91,35 +100,42 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="remember"
-                type="checkbox"
-                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-              />
-              <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
-                Recordarme
+            <div className="flex items-center justify-between">
+              <label className="flex items-center space-x-2 text-sm text-gray-600">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                />
+                <span>Recordarme</span>
               </label>
-              <input
-                id="register"
+              <button
                 type="button"
-                onClick={redirir}
-                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-              />
-              <label htmlFor="register" className="ml-2 text-sm text-gray-600">
-              <strong><u>Registrar</u></strong>
-              </label>
+                onClick={redirigir}
+                className="text-orange-600 hover:underline text-sm"
+              >
+                <strong><u>Registrar</u></strong>
+              </button>
             </div>
+
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition duration-300"
+              disabled={loading}
+              className={`w-full flex justify-center items-center gap-2 ${
+                loading ? 'bg-orange-400' : 'bg-orange-500 hover:bg-orange-600'
+              } text-white font-semibold py-2.5 rounded-lg transition duration-300`}
             >
-              Iniciar sesión
+              {loading && (
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+              )}
+              {loading ? 'Iniciando...' : 'Iniciar sesión'}
             </button>
 
-            {/* Mensajes */}
+            {/* Mensaje de error */}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            {token && <p className="text-green-600 text-sm mt-2">Login exitoso</p>}
           </form>
         </div>
       </div>
