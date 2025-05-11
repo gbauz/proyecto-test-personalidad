@@ -1,37 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser, RegisterPayload, RoleOption, fetchRoles } from "./api";
-
-// Alerta visual reutilizable
-const SweetAlertLike = ({ title, message, onConfirm, onClose, icon }) => {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-lg p-6 w-80 text-center transition-transform transform scale-100">
-        {icon && (
-          <div className="flex justify-center mb-4">
-            <img src={icon} alt="Icono" className="w-16 h-16 animate-bounce" />
-          </div>
-        )}
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">{title}</h2>
-        <p className="text-gray-600 mb-4">{message}</p>
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Aceptar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import SweetAlertLike from "../../components/SweetAlertLike";
 
 const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -247,19 +217,16 @@ const Register = () => {
       </div>
 
       {/* Alerta visual */}
-      {alert && (
-        <SweetAlertLike
-          title={alert.title}
-          message={alert.message}
-          icon={
-            alert.type === 'success'
-              ? "https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.2/src/svg/checkmark-circle-outline.svg"
-              : "https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.2/src/svg/close-circle-outline.svg"
-          }
-          onConfirm={handleAlertConfirm}
-          onClose={() => setAlert(null)}
-        />
-      )}
+    {alert && (
+ <SweetAlertLike
+  title="Registro exitoso"
+  message="Tu cuenta ha sido creada correctamente."
+  icon="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.2/src/svg/checkmark-circle-outline.svg"
+  onConfirm={handleAlertConfirm}
+  autoCloseDelay={3000}
+/>
+
+)}
     </div>
   );
 };
