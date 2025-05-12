@@ -1,116 +1,113 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser, RegisterPayload, RoleOption, fetchRoles } from "./api"; // Asegúrate de tener esta función en api.ts
-
+import { registerUser, RegisterPayload, RoleOption, fetchRoles } from "./api";
+import SweetAlertLike from "../../components/SweetAlertLike";
 
 const Register = () => {
-  
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [roles, setRoles] = useState<RoleOption[]>([]);
-  const [selectedRole, setSelectedRole] = useState<number>(0)
-  // const rolName = localStorage.getItem("roleName");
+  const [selectedRole, setSelectedRole] = useState<number>(0);
   const [rolDeUsuario, setRolDeUsuario] = useState<string>("");
 
   const [form, setForm] = useState<RegisterPayload>({
     name: "",
     email: "",
     password: "",
-    roleId: 0, // por defecto puedes usar 1 para "usuario normal"
+    roleId: 0,
   });
 
-  console.log(selectedRole, " id de rol")
+  const [alert, setAlert] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
 
   useEffect(() => {
     const loadRoles = async () => {
       try {
-        const data = await fetchRoles();
-        setRoles(data);
+        const response = await fetchRoles();
+        if (response.isSuccess) {
+          setRoles(response.data);
+        } else {
+          console.error('Error del backend:', response.message);
+        }
       } catch (error) {
         console.error('Error al obtener roles:', error);
       }
     };
-    const rol = localStorage.getItem("rolName")
+
+    const rol = localStorage.getItem("rolName");
     setRolDeUsuario(rol || "");
     loadRoles();
   }, []);
-
 
   useEffect(() => {
     const adminRole = roles.find(role => role.label === "Administrador");
     if (adminRole) setSelectedRole(adminRole.value);
   }, [roles]);
-  
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (form.password !== confirmPassword) {
-//       return setError("Las contraseñas no coinciden");
-//     }
-
-//     try {
-//       await registerUser(form);
-//       navigate("/login");
-//     } catch (err) {
-//       console.error(err);
-//       setError("Error al registrar. Intenta de nuevo.");
-//     }
-//   };
-
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (form.password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
       return;
     }
-  
+
     try {
-      const payload = {
+      const payload: RegisterPayload = {
         name: form.name,
         email: form.email,
         password: form.password,
         roleId: selectedRole,
       };
-  
-      const result = await registerUser(payload);
-      console.log('Usuario registrado:', result);
 
-      if(rolDeUsuario == "" )
-      {
-        navigate('/login')
+      const result = await registerUser(payload);
+
+      if (!result.isSuccess) {
+        setAlert({
+          type: 'error',
+          title: 'Error al registrar',
+          message: result.message || 'Intenta nuevamente.',
+        });
+        return;
       }
-      
-      
+
+      setForm({ name: "", email: "", password: "", roleId: 0 });
+      setConfirmPassword("");
       setSelectedRole(0);
-      // Limpiar formulario
-      setForm({
-        name: '',
-        email: '',
-        password: '',
-        roleId: selectedRole,
+      setError("");
+
+      setAlert({
+        type: 'success',
+        title: 'Registro exitoso',
+        message: 'Tu cuenta ha sido creada correctamente.',
       });
 
-      setError('');
-  
-      // Opcional: redirigir o mostrar mensaje de éxito
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError('Error al registrar usuario');
+      setAlert({
+        type: 'error',
+        title: 'Error de servidor',
+        message: 'No se pudo registrar el usuario.',
+      });
     }
   };
-  
-  
+
+  const handleAlertConfirm = () => {
+    setAlert(null);
+    if (alert?.type === 'success') {
+      if (rolDeUsuario === "") {
+        navigate('/login');
+      }
+    }
+  };
 
   return (
-<div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-white px-4 py-6">
-<div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 bg-white shadow-xl rounded-xl overflow-hidden">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-white px-4 py-6">
+      <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 bg-white shadow-xl rounded-xl overflow-hidden">
 
         {/* Izquierda */}
         <div className="relative bg-black text-white p-10 flex flex-col justify-center">
@@ -187,25 +184,26 @@ const handleSubmit = async (e: React.FormEvent) => {
                 className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-3"
               />
             </div>
-            {rolDeUsuario != "Postulante" && rolDeUsuario != "" && (
-            <div>
-  <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-700">
-    Rol
-  </label>
-  <select
-    id="role"
-    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-3"
-    value={selectedRole}
-    onChange={(e) => setSelectedRole(Number(e.target.value))}
-    required = {false}
-  >
-    <option value="" disabled>Seleccione un rol</option>
-    {roles.map(role => (
-      <option key={role.value} value={role.value}>{role.label}</option>
-    ))}
-  </select>
-</div>
-  ) }
+
+            {rolDeUsuario !== "Postulante" && rolDeUsuario !== "" && (
+              <div>
+                <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-700">
+                  Rol
+                </label>
+                <select
+                  id="role"
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-3"
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(Number(e.target.value))}
+                >
+                  <option value="" disabled>Seleccione un rol</option>
+                  {roles.map(role => (
+                    <option key={role.value} value={role.value}>{role.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <button
@@ -217,6 +215,18 @@ const handleSubmit = async (e: React.FormEvent) => {
           </form>
         </div>
       </div>
+
+      {/* Alerta visual */}
+    {alert && (
+ <SweetAlertLike
+  title="Registro exitoso"
+  message="Tu cuenta ha sido creada correctamente."
+  icon="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.2/src/svg/checkmark-circle-outline.svg"
+  onConfirm={handleAlertConfirm}
+  autoCloseDelay={3000}
+/>
+
+)}
     </div>
   );
 };

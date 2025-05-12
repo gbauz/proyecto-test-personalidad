@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // 👈 importar
 import { HiMenu } from 'react-icons/hi';
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate(); // 👈 hook para redirección
@@ -35,16 +35,14 @@ const Header = () => {
   };
 
   return (
-    <nav className="bg-black border-b border-gray-800 shadow-md px-4">
+      <nav className="bg-black border-b border-gray-800 shadow-md px-4">
       <div className="flex items-center justify-between p-4 w-full">
 
         {/* Sidebar button */}
+   {/* Sidebar toggle button */}
         <button
           className="text-white bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm p-2.5 focus:outline-none"
-          type="button"
-          data-drawer-target="drawer-navigation"
-          data-drawer-show="drawer-navigation"
-          aria-controls="drawer-navigation"
+          onClick={toggleSidebar}
         >
           <HiMenu className="w-5 h-5" />
         </button>

@@ -5,22 +5,21 @@ export interface LoginPayload {
   password: string;
 }
 
-
 export interface UserLoginResponse {
   nombre: string;
   roleName: string;
 }
-export interface LoginResponse  {
-  message: string;
+
+export interface LoginData {
   token: string;
-  user: UserLoginResponse
+  user: UserLoginResponse;
 }
 
 export interface RegisterPayload {
-  name: string,
-  email: string,
-  password: string,
-  roleId?: number,
+  name: string;
+  email: string;
+  password: string;
+  roleId?: number;
 }
 
 export interface RoleOption {
@@ -28,22 +27,28 @@ export interface RoleOption {
   label: string;
 }
 
+// NUEVA interfaz genérica para todas las respuestas del backend
+export interface ApiResponse<T> {
+  isSuccess: boolean;
+  message: string;
+  data: T;
+}
 
 const API_URL = "http://localhost:3001/api";
 const AUTH_URL = "auth";
-const BASE_URL_AUTH = `${API_URL}/${AUTH_URL}`
+const BASE_URL_AUTH = `${API_URL}/${AUTH_URL}`;
 
-export const loginUser = async (data: LoginPayload): Promise<LoginResponse> => {
+export const loginUser = async (data: LoginPayload): Promise<ApiResponse<LoginData>> => {
   const response = await axios.post(`${BASE_URL_AUTH}/login`, data);
   return response.data;
 };
 
-export const registerUser = async (data: RegisterPayload): Promise<{ message: string }> => {
+export const registerUser = async (data: RegisterPayload): Promise<ApiResponse<null>> => {
   const response = await axios.post(`${BASE_URL_AUTH}/register`, data);
   return response.data;
 };
 
-export const fetchRoles = async (): Promise<RoleOption[]> => {
-  const res = await axios.get(`${BASE_URL_AUTH}/roles`);
-  return res.data;
+export const fetchRoles = async (): Promise<ApiResponse<RoleOption[]>> => {
+  const response = await axios.get(`${BASE_URL_AUTH}/roles`);
+  return response.data;
 };

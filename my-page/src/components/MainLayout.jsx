@@ -1,15 +1,24 @@
 import Header from './Header';
 import SideBar from './SideBar';
-import Footer from './footer';
+import Footer from './Footer';
 import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
 
 const MainLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // ✅ visible por defecto
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
   return (
     <div className="min-h-screen flex flex-col bg-white text-white">
-      <Header />
+      <Header toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
-        <SideBar />
-        <main className="flex-1 p-6">
+        <SideBar isOpen={isSidebarOpen} />
+        <main
+          className={`flex-1 p-6 bg-white transition-all duration-300 ${
+            isSidebarOpen ? 'lg:ml-64' : ''
+          }`}
+        >
           <Outlet />
         </main>
       </div>

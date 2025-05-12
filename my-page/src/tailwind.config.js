@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
+        // inter: ['Inter', 'sans-serif'],
         orbiter: ['"TASA Orbiter Display"', 'sans-serif'],
       },
       colors: {
