@@ -1,4 +1,12 @@
+import { Navigate, useNavigate } from "react-router-dom";
+
 const Landing = () => {
+  const irALogin = useNavigate();
+
+
+  const redirigir = () => {
+    irALogin('/login')
+  }
   return (
     <div className="min-h-screen text-white">
       {/* Hero Section */}
@@ -27,7 +35,9 @@ const Landing = () => {
 
           {/* Contact Button */}
           <div>
-            <button className="bg-[#EB4B15] text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300">
+            <button
+            onClick={redirigir} 
+            className="bg-[#EB4B15] text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300">
               Iniciar Sesión
             </button>
           </div>

@@ -5,7 +5,6 @@ import Settings from '../Features/Settings/Settings';
 import Register from '../Features/Auth/Register';
 
 
-
 const PrivateRoutes = () => {
   const isAuthenticated = !!localStorage.getItem('token');
 
@@ -13,7 +12,7 @@ const PrivateRoutes = () => {
     <Routes>
       <Route
         path="/"
-        element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}
+        element={isAuthenticated ? <MainLayout /> : <Navigate to="/landing" />}
       >
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='register' element={< Register />} />

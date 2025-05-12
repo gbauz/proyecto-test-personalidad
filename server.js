@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import authRoutes from './my-page/backend/routes/authRoutes.js'; // 👈 agrega extensión .js
+import authRoutes from './my-page/backend/routes/authRoutes.js';
 import cors from 'cors'
 
 const app = express();

@@ -6,6 +6,9 @@ const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate(); // 👈 hook para redirección
+  
+  const nombreUsuario = localStorage.getItem("nombre");
+  const rolUsuario = localStorage.getItem("rolName");
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -26,6 +29,8 @@ const Header = () => {
     setDropdownOpen(false);
     localStorage.removeItem("persist:root")
     localStorage.removeItem("token")
+    localStorage.removeItem("nombre")
+    localStorage.removeItem("rolName")
     navigate('/login');
   };
 
@@ -66,8 +71,8 @@ const Header = () => {
             }`}
           >
             <div className="px-4 py-3 border-b border-gray-200">
-              <span className="block text-sm font-medium">Bonnie Green</span>
-              <span className="block text-sm text-gray-500 truncate">name@flowbite.com</span>
+              <span className="block text-sm font-medium">{nombreUsuario}</span>
+              <span className="block text-sm text-gray-500 truncate">{rolUsuario}</span>
             </div>
             <ul className="py-1">
               <li>

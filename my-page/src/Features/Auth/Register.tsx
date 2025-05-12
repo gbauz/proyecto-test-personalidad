@@ -10,6 +10,8 @@ const Register = () => {
   const navigate = useNavigate();
   const [roles, setRoles] = useState<RoleOption[]>([]);
   const [selectedRole, setSelectedRole] = useState<number>(0)
+  // const rolName = localStorage.getItem("roleName");
+  const [rolDeUsuario, setRolDeUsuario] = useState<string>("");
 
   const [form, setForm] = useState<RegisterPayload>({
     name: "",
@@ -29,9 +31,17 @@ const Register = () => {
         console.error('Error al obtener roles:', error);
       }
     };
-
+    const rol = localStorage.getItem("rolName")
+    setRolDeUsuario(rol || "");
     loadRoles();
   }, []);
+
+
+  useEffect(() => {
+    const adminRole = roles.find(role => role.label === "Administrador");
+    if (adminRole) setSelectedRole(adminRole.value);
+  }, [roles]);
+  
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +81,12 @@ const handleSubmit = async (e: React.FormEvent) => {
   
       const result = await registerUser(payload);
       console.log('Usuario registrado:', result);
+
+      if(rolDeUsuario == "" )
+      {
+        navigate('/login')
+      }
+      
       
       setSelectedRole(0);
       // Limpiar formulario
@@ -171,6 +187,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-3"
               />
             </div>
+            {rolDeUsuario != "Postulante" && rolDeUsuario != "" && (
             <div>
   <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-700">
     Rol
@@ -178,9 +195,9 @@ const handleSubmit = async (e: React.FormEvent) => {
   <select
     id="role"
     className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-3"
-    value={selectedRole ?? ''}
+    value={selectedRole}
     onChange={(e) => setSelectedRole(Number(e.target.value))}
-    required
+    required = {false}
   >
     <option value="" disabled>Seleccione un rol</option>
     {roles.map(role => (
@@ -188,8 +205,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     ))}
   </select>
 </div>
-
-
+  ) }
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <button
