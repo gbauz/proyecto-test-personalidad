@@ -15,8 +15,7 @@ const MainLayout = () => {
       <div className="flex flex-1">
         <SideBar isOpen={isSidebarOpen} />
         <main
-          className={`flex-1 p-6 bg-white transition-all duration-300 ${
-            isSidebarOpen ? 'lg:ml-64' : ''
+          className={`flex-1 p-6 bg-white transition-all duration-300
           }`}
         >
           <Outlet />
