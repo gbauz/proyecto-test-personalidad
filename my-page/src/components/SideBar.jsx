@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BarChart2, Users } from "lucide-react";
+import { Home, BarChart2, Users, FileQuestion, User  } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const SideBar = ({ isOpen }) => {
@@ -35,22 +35,40 @@ const SideBar = ({ isOpen }) => {
 
       <nav className="mt-6 px-4">
         <ul className="space-y-2 text-sm">
+            {rol === "Postulante" && (
           <li>
             <Link to="/dashboard" className={navItemClass("/dashboard")}>
               <Home className="w-5 h-5" />
               <span>Inicio</span>
             </Link>
           </li>
+          )}
+           {rol === "Administrador" && (
+          <li>
+            <Link to="/dashboardAdmin" className={navItemClass("/dashboardAdmin")}>
+              <Home className="w-5 h-5" />
+              <span>Inicio</span>
+            </Link>
+          </li>
+          )}
           <li>
             <Link to="/report" className={navItemClass("/report")}>
               <BarChart2 className="w-5 h-5" />
               <span>Reportes</span>
             </Link>
           </li>
+           {rol === "Postulante" && (
+          <li>
+            <Link to="/questions" className={navItemClass("/questions")}>
+              <FileQuestion  className="w-5 h-5" />
+              <span>Preguntas</span>
+            </Link>
+          </li>
+)}
           {rol !== "Postulante" && (
             <li>
               <Link to="/register" className={navItemClass("/register")}>
-                <Users className="w-5 h-5" />
+                <User  className="w-5 h-5" />
                 <span>Usuarios</span>
               </Link>
             </li>

@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../components/MainLayout';
-import Dashboard from '../Features/Dashboard/Dashboard';
+// import Dashboard from '../Features/Dashboard/Dashboard';
+import MBTITest from '../Features/Begin/Inicio';
 import Settings from '../Features/Settings/Settings';
 import Register from '../Features/Auth/Register';
+import MBTIQuestionPage from '../Features/Preguntas/Preguntas';
+import AdminDashboardPage from '../Features/Begin/InicioAdministrador';
 
 const PrivateRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -27,7 +30,9 @@ const PrivateRoutes = () => {
         path="/"
         element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}
       >
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<MBTITest />} />
+         <Route path="questions" element={<MBTIQuestionPage />} />
+         <Route path="dashboardAdmin" element={<AdminDashboardPage />} />
         <Route path="register" element={<Register />} />
         <Route path="settings" element={<Settings />} />
       </Route>

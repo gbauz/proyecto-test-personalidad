@@ -32,7 +32,13 @@ const Login = () => {
       localStorage.setItem('rolName', user.roleName);
 
       window.dispatchEvent(new Event('authChanged'));
-      navigate('/dashboard');
+      if(user.roleName === "Postulante"){
+        navigate('/dashboard');
+      }else if(user.roleName === "Administrador"){
+        navigate('/dashboardAdmin')
+      }
+      
+
     } catch (err) {
       console.error(err);
       setError("Error de servidor o credenciales inválidas.");
