@@ -54,17 +54,26 @@ const SideBar = ({ isOpen }) => {
           <li>
             <Link to="/report" className={navItemClass("/report")}>
               <BarChart2 className="w-5 h-5" />
-              <span>Reportes</span>
+              <span>Mis procesos</span>
             </Link>
           </li>
-           {rol === "Postulante" && (
           <li>
-            <Link to="/questions" className={navItemClass("/questions")}>
-              <FileQuestion  className="w-5 h-5" />
-              <span>Preguntas</span>
+            <Link to="/report" className={navItemClass("/report")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Mi perfil</span>
+            </Link>
+            <li>
+            <Link to="/report" className={navItemClass("/report")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Potencia tu perfil</span>
+            </Link>
+            <Link to="/report" className={navItemClass("/report")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>FAQ</span>
             </Link>
           </li>
-)}
+          </li>
+          
           {rol !== "Postulante" && (
             <li>
               <Link to="/register" className={navItemClass("/register")}>

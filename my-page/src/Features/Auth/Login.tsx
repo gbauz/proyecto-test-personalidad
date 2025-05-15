@@ -34,7 +34,7 @@ const Login = () => {
       window.dispatchEvent(new Event('authChanged'));
       if(user.roleName === "Postulante"){
         navigate('/dashboard');
-      }else if(user.roleName === "Administrador"){
+      }else if(user.roleName === "Recursos Humanos"){
         navigate('/dashboardAdmin')
       }
       

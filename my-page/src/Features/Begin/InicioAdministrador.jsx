@@ -5,7 +5,7 @@ const AdminDashboardPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-[#fdf2ec] px-6 py-10">
       <h1 className="text-4xl font-bold text-black mb-4">
-        👋 Bienvenido de nuevo, Administrador
+        👋 Bienvenido de nuevo
       </h1>
 
       <p className="text-lg text-gray-700 mb-10">
