@@ -23,7 +23,7 @@ export const register = async (req, res) => {
       return res.status(400).json(apiResponse(false, 'El usuario ya existe'));
     }
 
-    const DEFAULT_ROLE_ID = 4;
+    const DEFAULT_ROLE_ID = 2;
     roleId = (!roleId || roleId === 0) ? DEFAULT_ROLE_ID : roleId;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -103,4 +103,5 @@ export const getRoles = async (req, res) => {
     console.error(error);
     res.status(500).json(apiResponse(false, 'No se pudieron obtener los roles'));
   }
+
 };
