@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BarChart2, Users, FileQuestion, User  } from "lucide-react";
+import { Home, BarChart2, User, FilePlus2  } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const SideBar = ({ isOpen }) => {
@@ -51,37 +51,57 @@ const SideBar = ({ isOpen }) => {
             </Link>
           </li>
           )}
-          <li>
-            <Link to="/report" className={navItemClass("/report")}>
-              <BarChart2 className="w-5 h-5" />
-              <span>Mis procesos</span>
-            </Link>
-          </li>
+         
+          
+          {rol === "Postulante" && (
+            <>  
           <li>
             <Link to="/report" className={navItemClass("/report")}>
               <BarChart2 className="w-5 h-5" />
               <span>Mi perfil</span>
             </Link>
+            </li>
             <li>
-            <Link to="/report" className={navItemClass("/report")}>
-              <BarChart2 className="w-5 h-5" />
-              <span>Potencia tu perfil</span>
-            </Link>
-            <Link to="/report" className={navItemClass("/report")}>
+            <Link to="/faq" className={navItemClass("/faq")}>
               <BarChart2 className="w-5 h-5" />
               <span>FAQ</span>
             </Link>
           </li>
-          </li>
-          
-          {rol !== "Postulante" && (
-            <li>
-              <Link to="/register" className={navItemClass("/register")}>
-                <User  className="w-5 h-5" />
-                <span>Usuarios</span>
-              </Link>
+             <li>
+            <Link to="/estadopostulacion" className={navItemClass("/estadopostulacion")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Mis Postulaciones</span>
+            </Link>
             </li>
+          </>
           )}
+
+
+           {rol === "Administrador" && (
+            <>
+              <li>
+                <Link to="/dashboardAdmin" className={navItemClass("/dashboardAdmin")}>
+                  <Home className="w-5 h-5" />
+                  <span>Inicio</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/register" className={navItemClass("/registrar-usuarios")}>
+                  <FilePlus2 className="w-5 h-5" />
+                  <span>Registrar Usuarios</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/consultarusuarios" className={navItemClass("/consultarusuarios")}>
+                  <User className="w-5 h-5" />
+                  <span>Consultar Usuarios</span>
+                </Link>
+              </li>
+            
+            </>
+          )}
+
+          
         </ul>
       </nav>
 

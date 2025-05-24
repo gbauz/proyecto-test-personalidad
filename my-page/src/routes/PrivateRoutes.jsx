@@ -7,6 +7,11 @@ import Settings from '../Features/Settings/Settings';
 import Register from '../Features/Auth/Register';
 import MBTIQuestionPage from '../Features/Preguntas/Preguntas';
 import AdminDashboardPage from '../Features/Begin/InicioAdministrador';
+import Ofertaslaborales from '../Features/OfertasLaborales/OfertasLaborales';
+import Faq from '../Features/Faq/Faq';
+import ConsultarUsuario from '../Features/Auth/ConsultarUsuario';
+import EstadoPostulacion from '../Features/Estado/EstadoPostulacion';
+
 
 const PrivateRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -35,6 +40,10 @@ const PrivateRoutes = () => {
          <Route path="dashboardAdmin" element={<AdminDashboardPage />} />
         <Route path="register" element={<Register />} />
         <Route path="settings" element={<Settings />} />
+         <Route path="consultarusuarios" element={<ConsultarUsuario />} />
+        <Route path="ofertaslaborales" element={<Ofertaslaborales />} />
+         <Route path="estadopostulacion" element={<EstadoPostulacion />} />
+        <Route path="faq" element={<Faq />} />
       </Route>
     </Routes>
   );
