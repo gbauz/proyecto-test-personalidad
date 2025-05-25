@@ -1,116 +1,4 @@
--- CreateTable
-CREATE TABLE `UsuarioTest` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `idUsuario` INTEGER NOT NULL,
-    `tipoTestId` INTEGER NOT NULL,
-    `codigo` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `TipoTest` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CategoriaDePreguntas` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(191) NOT NULL,
-    `orden` INTEGER NOT NULL,
-    `tipoTestId` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Pregunta` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `pregunta` VARCHAR(191) NOT NULL,
-    `categoriaPreguntasId` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Respuesta` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(191) NOT NULL,
-    `puntaje` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `RespuestasUsuarioTest` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `idUsuarioTest` INTEGER NOT NULL,
-    `idRespuesta` INTEGER NOT NULL,
-    `idPregunta` INTEGER NOT NULL,
-    `idCategoria` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Personalidades` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(191) NOT NULL,
-    `keywords` VARCHAR(200) NOT NULL,
-    `descripcion` VARCHAR(191) NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `ResultadosDeTest` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `idDicotomia` INTEGER NOT NULL,
-    `idUsuarioTest` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `UsuarioTest` ADD CONSTRAINT `UsuarioTest_idUsuario_fkey` FOREIGN KEY (`idUsuario`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `UsuarioTest` ADD CONSTRAINT `UsuarioTest_tipoTestId_fkey` FOREIGN KEY (`tipoTestId`) REFERENCES `TipoTest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CategoriaDePreguntas` ADD CONSTRAINT `CategoriaDePreguntas_tipoTestId_fkey` FOREIGN KEY (`tipoTestId`) REFERENCES `TipoTest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Pregunta` ADD CONSTRAINT `Pregunta_categoriaPreguntasId_fkey` FOREIGN KEY (`categoriaPreguntasId`) REFERENCES `CategoriaDePreguntas`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `RespuestasUsuarioTest` ADD CONSTRAINT `RespuestasUsuarioTest_idUsuarioTest_fkey` FOREIGN KEY (`idUsuarioTest`) REFERENCES `UsuarioTest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `RespuestasUsuarioTest` ADD CONSTRAINT `RespuestasUsuarioTest_idRespuesta_fkey` FOREIGN KEY (`idRespuesta`) REFERENCES `Respuesta`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `RespuestasUsuarioTest` ADD CONSTRAINT `RespuestasUsuarioTest_idPregunta_fkey` FOREIGN KEY (`idPregunta`) REFERENCES `Pregunta`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `RespuestasUsuarioTest` ADD CONSTRAINT `RespuestasUsuarioTest_idCategoria_fkey` FOREIGN KEY (`idCategoria`) REFERENCES `CategoriaDePreguntas`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `ResultadosDeTest` ADD CONSTRAINT `ResultadosDeTest_idDicotomia_fkey` FOREIGN KEY (`idDicotomia`) REFERENCES `Dicotomia`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `ResultadosDeTest` ADD CONSTRAINT `ResultadosDeTest_idUsuarioTest_fkey` FOREIGN KEY (`idUsuarioTest`) REFERENCES `UsuarioTest`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
-
--- Insertar datos en la tabla 'TipoTest'
-INSERT INTO `TipoTest` (nombre) VALUES
-  ('MBTI'),
-  ('OtroTest');
-
--- Insertar datos en la tabla 'Dicotomia'
+-- This is an empty migration.
 INSERT INTO `Personalidades` (`nombre`, `keywords`, `descripcion`) VALUES
 ('ESTJ – El Ejecutivo', 'Organizado. Práctico. Líder nato.', 'Los ESTJ valoran la estructura y la responsabilidad. Son personas decididas que confían en su experiencia y se enfocan en hacer las cosas de manera eficiente. Si hay caos, ellos lo convierten en orden. Fortalezas: Dedicados, fuertes en la gestión, leales y directos. Debilidades: Inflexibles, impacientes y pueden ser insensibles a las emociones ajenas. Desarrollo: Fomenta la empatía y considera diferentes perspectivas antes de tomar decisiones.'),
 ('ESTP – El Emprendedor', 'Espontáneo. Energético. Resolvedor de problemas.', 'Los ESTP viven el momento. Son ingeniosos y directos, prefieren actuar antes que planear en exceso. Les encanta tomar riesgos y adaptarse rápido a los cambios. Fortalezas: Enérgicos, perceptivos, directos y valientes. Debilidades: Impacientes, insensibles y pueden ser propensos al riesgo excesivo. Desarrollo: Practica la reflexión antes de actuar y considera las consecuencias a largo plazo.'),
@@ -135,6 +23,8 @@ INSERT INTO `Role` (name) VALUES
   ('Postulante'),
   ('Recursos Humanos');
 
+  INSERT INTO TipoTest (nombre) VALUES ('Test de Personalidad');
+
 
 -- Insertar datos en la tabla 'CategoriaDePreguntas'
 INSERT INTO `CategoriaDePreguntas` (nombre, orden, tipoTestId) VALUES
@@ -143,7 +33,9 @@ INSERT INTO `CategoriaDePreguntas` (nombre, orden, tipoTestId) VALUES
   ('Dimensión T/N', 3, 1),
   ('Dimensión J/P', 4, 1);
 
--- Insertar datos en la tabla 'Pregunta'
+
+
+  -- Insertar datos en la tabla 'Pregunta'
 INSERT INTO `Pregunta` (pregunta, categoriaPreguntasId) VALUES
   ('¿Te consideras extrovertido?', 1),
   ('¿Prefieres concentrarte en detalles concretos?', 2);

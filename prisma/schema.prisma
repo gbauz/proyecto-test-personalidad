@@ -8,97 +8,101 @@ generator client {
 }
 
 model User {
- id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
-  roleId    Int
-  role      Role     @relation(fields: [roleId], references: [id])
-  createdAt DateTime @default(now())
-  usuarioTests  UsuarioTest[]
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  name         String
+  isActive     Boolean       @default(true)
+  roleId       Int
+  role         Role          @relation(fields: [roleId], references: [id])
+  createdAt    DateTime      @default(now())
+  usuarioTests UsuarioTest[]
 }
 
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @unique
+  isActive     Boolean       @default(true)
   users User[]
 }
 
 model UsuarioTest {
-  id         Int               @id @default(autoincrement())
+  id         Int                    @id @default(autoincrement())
   idUsuario  Int
+  isActive     Boolean       @default(true)
   tipoTestId Int
   codigo     String
 
-  usuario    User           @relation(fields: [idUsuario], references: [id])
-  tipoTest   TipoTest          @relation(fields: [tipoTestId], references: [id])
+  usuario    User                   @relation(fields: [idUsuario], references: [id])
+  tipoTest   TipoTest               @relation(fields: [tipoTestId], references: [id])
   respuestas RespuestasUsuarioTest[]
   resultados ResultadosDeTest[]
 }
 
-
 model TipoTest {
-  id          Int               @id @default(autoincrement())
-  nombre      String
-  categorias  CategoriaDePreguntas[]
+  id           Int                    @id @default(autoincrement())
+  nombre       String
+  isActive     Boolean       @default(true)
+  categorias   CategoriaDePreguntas[]
   usuarioTests UsuarioTest[]
 }
 
-
 model CategoriaDePreguntas {
-  id          Int               @id @default(autoincrement())
-  nombre      String
-  orden       Int
-  tipoTestId  Int
-  tipoTest    TipoTest          @relation(fields: [tipoTestId], references: [id])
-  preguntas   Pregunta[]
-  respuestasUsuario  RespuestasUsuarioTest[]
-}
-
-model Pregunta {
-  id                 Int               @id @default(autoincrement())
-  pregunta           String
-  categoriaPreguntasId Int
-  categoriaPreguntas CategoriaDePreguntas @relation(fields: [categoriaPreguntasId], references: [id])
-  respuestasUsuario  RespuestasUsuarioTest[]
-}
-
-
-model Respuesta {
-  id       Int    @id @default(autoincrement())
-  nombre   String
-  puntaje  Int
+  id                Int                    @id @default(autoincrement())
+  nombre            String
+  orden             Int
+  isActive     Boolean       @default(true)
+  tipoTestId        Int
+  tipoTest          TipoTest               @relation(fields: [tipoTestId], references: [id])
+  preguntas         Pregunta[]
   respuestasUsuario RespuestasUsuarioTest[]
 }
 
+model Pregunta {
+  id                   Int                   @id @default(autoincrement())
+  pregunta             String
+  categoriaPreguntasId Int
+  isActive     Boolean       @default(true)
+  categoriaPreguntas   CategoriaDePreguntas  @relation(fields: [categoriaPreguntasId], references: [id])
+  respuestasUsuario    RespuestasUsuarioTest[]
+}
 
+model Respuesta {
+  id                Int                   @id @default(autoincrement())
+  nombre            String
+  puntaje           Int
+  isActive     Boolean       @default(true)
+  respuestasUsuario RespuestasUsuarioTest[]
+}
 
 model RespuestasUsuarioTest {
-  id             Int         @id @default(autoincrement())
+  id             Int                  @id @default(autoincrement())
   idUsuarioTest  Int
   idRespuesta    Int
   idPregunta     Int
+  isActive     Boolean       @default(true)
   idCategoria    Int
 
-  usuarioTest    UsuarioTest @relation(fields: [idUsuarioTest], references: [id])
-  respuesta      Respuesta   @relation(fields: [idRespuesta], references: [id])
-  pregunta       Pregunta    @relation(fields: [idPregunta], references: [id])
+  usuarioTest    UsuarioTest          @relation(fields: [idUsuarioTest], references: [id])
+  respuesta      Respuesta            @relation(fields: [idRespuesta], references: [id])
+  pregunta       Pregunta             @relation(fields: [idPregunta], references: [id])
   categoria      CategoriaDePreguntas @relation(fields: [idCategoria], references: [id])
 }
 
-
-model Dicotomia {
+model Personalidades {
   id          Int               @id @default(autoincrement())
   nombre      String
+  keywords    String
+  isActive     Boolean       @default(true)
   descripcion String?
   resultados  ResultadosDeTest[]
 }
 
 model ResultadosDeTest {
-  id           Int           @id @default(autoincrement())
-  idDicotomia  Int
+  id            Int          @id @default(autoincrement())
+  idDicotomia   Int
   idUsuarioTest Int
-
-  dicotomia    Dicotomia      @relation(fields: [idDicotomia], references: [id])
-  usuarioTest  UsuarioTest    @relation(fields: [idUsuarioTest], references: [id])
+  isActive     Boolean       @default(true)
+  personalidades     Personalidades    @relation(fields: [idDicotomia], references: [id])
+  usuarioTest   UsuarioTest  @relation(fields: [idUsuarioTest], references: [id])
 }
