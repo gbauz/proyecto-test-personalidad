@@ -26,18 +26,20 @@ const Login = () => {
       }
 
       const { token, user } = result.data;
-
+      console.log("adasdasd",user)
+      // ✅ Guardar claves correctas
       localStorage.setItem('token', token);
       localStorage.setItem('nombre', user.nombre);
-      localStorage.setItem('rolName', user.roleName);
+      localStorage.setItem('userId', user.id.toString());
+      localStorage.setItem('rolName', user.roleName); // 👈 CAMBIO CRÍTICO AQUÍ
 
       window.dispatchEvent(new Event('authChanged'));
-      if(user.roleName === "Postulante"){
+
+      if (user.roleName === "Postulante") {
         navigate('/dashboard');
-      }else if(user.roleName === "Recursos Humanos"){
-        navigate('/dashboardAdmin')
+      } else if (user.roleName === "Recursos Humanos" || user.roleName === "Administrador") {
+        navigate('/dashboardAdmin');
       }
-      
 
     } catch (err) {
       console.error(err);
@@ -57,12 +59,8 @@ const Login = () => {
         {/* Izquierda */}
         <div className="relative bg-black text-white p-10 flex flex-col justify-center">
           <h2 className="text-white mb-4" style={{ color: '#EA4711' }}>Humanize</h2>
-          <p className="text-white mb-4" style={{ color: '#FFFFFF' }}>
-            ¿Listo para descubrir tu perfil de personalidad?
-          </p>
-          <p className="text-white mb-4" style={{ color: '#FFFFFF' }}>
-            Evalúa, conecta y contrata con inteligencia emocional.
-          </p>
+          <p className="text-white mb-4">¿Listo para descubrir tu perfil de personalidad?</p>
+          <p className="text-white mb-4">Evalúa, conecta y contrata con inteligencia emocional.</p>
           <img
             src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=800&q=80"
             alt="Team working"
@@ -140,7 +138,6 @@ const Login = () => {
               {loading ? 'Iniciando...' : 'Iniciar sesión'}
             </button>
 
-            {/* Mensaje de error */}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </form>
         </div>

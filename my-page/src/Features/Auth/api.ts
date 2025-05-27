@@ -6,6 +6,7 @@ export interface LoginPayload {
 }
 
 export interface UserLoginResponse {
+  id: number;
   nombre: string;
   roleName: string;
 }
@@ -46,6 +47,17 @@ export interface RoleOption {
   value: number;
   label: string;
 }
+
+
+export interface OfertaPayload {
+  nombre: string;
+  descripcion: string;
+  sueldo: number;
+  modalidad: string;
+  creadorId: number;
+}
+
+
 
 // NUEVA interfaz genérica para todas las respuestas del backend
 export interface ApiResponse<T> {
@@ -97,5 +109,23 @@ export const deleteUsuarioStructured = async (
     `${BASE_URL_AUTH}/consultarusuarios/delete`,
     data
   );
+  return response.data;
+};
+
+
+export const crearOferta = async (
+  data: OfertaPayload
+): Promise<ApiResponse<null>> => {
+  const response = await axios.post(`${BASE_URL_AUTH}/crearoferta`, data);
+  return response.data;
+};
+
+
+export const obtenerOfertasParaPostulante = async (
+  userId: number
+): Promise<ApiResponse<any[]>> => {
+  const response = await axios.get(`${BASE_URL_AUTH}/verofertas`, {
+    params: { userId },
+  });
   return response.data;
 };

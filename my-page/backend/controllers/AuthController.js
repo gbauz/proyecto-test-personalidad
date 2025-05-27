@@ -24,7 +24,7 @@ export const register = async (req, res) => {
     }
 
     const DEFAULT_ROLE_ID = 2;
-    roleId = (!roleId || roleId === 0) ? DEFAULT_ROLE_ID : roleId;
+    roleId = (!roleId || roleId === 1) ? DEFAULT_ROLE_ID : roleId; 
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -45,15 +45,12 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log("Estoy entrando al login");
-  console.log("Request Body:", req.body);
-
   const { email, password } = req.body;
 
   try {
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { role: true },
+      include: { role: true }, // Incluye nombre del rol
     });
 
     if (!user) {
@@ -65,6 +62,10 @@ export const login = async (req, res) => {
       return res.status(400).json(apiResponse(false, 'Credenciales incorrectas'));
     }
 
+    if (!user.role || !user.role.name) {
+      return res.status(400).json(apiResponse(false, 'El usuario no tiene un rol asignado'));
+    }
+
     const token = jwt.sign(
       { userId: user.id, role: user.roleId },
       SECRET_KEY,
@@ -74,6 +75,7 @@ export const login = async (req, res) => {
     res.json(apiResponse(true, 'Login exitoso', {
       token,
       user: {
+        id: user.id, // ✅ NECESARIO PARA EL FRONTEND
         nombre: user.name,
         roleName: user.role.name,
       },
@@ -173,5 +175,64 @@ export const deleteUserStructured = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json(apiResponse(false, "Error al eliminar usuario"));
+  }
+};
+
+
+export const crearOferta = async (req, res) => {
+  const { nombre, descripcion, sueldo, modalidad, creadorId } = req.body;
+
+  if (!creadorId) {
+    return res.status(400).json(apiResponse(false, 'Falta el ID del creador'));
+  }
+
+  try {
+    const creador = await prisma.user.findUnique({ where: { id: creadorId } });
+    const RH_ROLE_ID = 2;
+
+    // if (!creador || creador.roleId !== RH_ROLE_ID) {
+    //   return res.status(403).json(apiResponse(false, 'Solo Recursos Humanos puede crear ofertas'));
+    // }
+
+    const nuevaOferta = await prisma.oferta.create({
+      data: {
+        nombre,
+        descripcion,
+        sueldo: parseFloat(sueldo),
+        modalidad,
+        creadorId,
+        creadoEn: new Date().toISOString(),
+      },
+    });
+
+    res.status(201).json(apiResponse(true, 'Oferta creada exitosamente', nuevaOferta));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(apiResponse(false, 'Error al crear la oferta'));
+  }
+};
+
+
+export const obtenerOfertasParaPostulantes = async (req, res) => {
+  const { userId } = req.query;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: Number(userId) } });
+
+    // if (!user || user.roleId !== 1) {
+    //   return res.status(403).json(apiResponse(false, 'Solo postulantes pueden ver ofertas'));
+    // }
+
+    const ofertas = await prisma.oferta.findMany({
+      include: {
+        creador: { select: { name: true } },
+      },
+      orderBy: { creadoEn: 'desc' },
+    });
+
+    res.json(apiResponse(true, 'Ofertas para postulantes obtenidas', ofertas));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(apiResponse(false, 'Error al obtener ofertas'));
   }
 };

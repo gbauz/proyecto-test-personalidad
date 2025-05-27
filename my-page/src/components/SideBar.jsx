@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BarChart2, User, FilePlus2  } from "lucide-react";
+import { Home, BarChart2, User, FilePlus2, FilePlus, FileQuestion, LogOut  } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const SideBar = ({ isOpen }) => {
@@ -8,6 +8,7 @@ const SideBar = ({ isOpen }) => {
 
   useEffect(() => {
     const rolName = localStorage.getItem("rolName");
+    
     setRol(rolName);
   }, []);
 
@@ -51,6 +52,47 @@ const SideBar = ({ isOpen }) => {
             </Link>
           </li>
           )}
+
+          {rol === "Recursos Humanos" && (
+            <>
+              <li>
+                <Link to="/dashboardRRHH" className={navItemClass("/dashboardRRHH")}>
+                  <Home className="w-5 h-5" />
+                  <span>Inicio</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/ofertas" className={navItemClass("/ofertas")}>
+                  <FilePlus className="w-5 h-5" />
+                  <span>Crear Ofertas</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/perfil" className={navItemClass("/perfil")}>
+                  <User className="w-5 h-5" />
+                  <span>Mi perfil</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className={navItemClass("/faq")}>
+                  <FileQuestion className="w-5 h-5" />
+                  <span>FAQ</span>
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.href = "/login";
+                  }}
+                  className={`${navItemClass("")} w-full text-left`}
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </li>
+            </>
+          )}
          
           
           {rol === "Postulante" && (
@@ -68,7 +110,7 @@ const SideBar = ({ isOpen }) => {
             </Link>
           </li>
              <li>
-            <Link to="/estadopostulacion" className={navItemClass("/estadopostulacion")}>
+            <Link to="/ofertaspostulante" className={navItemClass("/ofertaspostulante")}>
               <BarChart2 className="w-5 h-5" />
               <span>Mis Postulaciones</span>
             </Link>

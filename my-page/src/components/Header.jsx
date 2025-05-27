@@ -31,6 +31,7 @@ const Header = ({ toggleSidebar }) => {
     localStorage.removeItem("token")
     localStorage.removeItem("nombre")
     localStorage.removeItem("rolName")
+    localStorage.removeItem("userId")
     navigate('/login');
   };
 

@@ -16,6 +16,8 @@ model User {
   roleId       Int
   role         Role          @relation(fields: [roleId], references: [id])
   createdAt    DateTime      @default(now())
+  ofertas       oferta[]      @relation("OfertasCreadas")
+  postulaciones postulacion[] @relation("PostulacionesHechas")
   usuarioTests UsuarioTest[]
 }
 
@@ -25,6 +27,29 @@ model Role {
   isActive     Boolean       @default(true)
   users User[]
 }
+
+model oferta {
+  id            Int           @id @default(autoincrement())
+  nombre        String
+  descripcion   String
+  sueldo        Float
+  modalidad     String
+  creadorId     Int
+  creador       User          @relation("OfertasCreadas", fields: [creadorId], references: [id])
+  postulaciones postulacion[]
+  creadoEn      DateTime      @default(now())
+}
+
+
+model postulacion {
+  id            Int      @id @default(autoincrement())
+  ofertaId      Int
+  oferta        oferta   @relation(fields: [ofertaId], references: [id])
+  postulanteId  Int
+  postulante    User     @relation("PostulacionesHechas", fields: [postulanteId], references: [id])
+  fecha         DateTime @default(now())
+}
+
 
 model UsuarioTest {
   id         Int                    @id @default(autoincrement())

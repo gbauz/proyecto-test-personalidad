@@ -11,7 +11,9 @@ import Ofertaslaborales from '../Features/OfertasLaborales/OfertasLaborales';
 import Faq from '../Features/Faq/Faq';
 import ConsultarUsuario from '../Features/Auth/ConsultarUsuario';
 import EstadoPostulacion from '../Features/Estado/EstadoPostulacion';
-
+import OfertasPostulante from '../Features/Auth/OfertaPostulante';
+import Postulacion from '../Features/OfertasLaborales/OfertasLaborales';
+import FormularioOfertaFlowbite from '../Features/Auth/CrearOferta';
 
 const PrivateRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -44,6 +46,8 @@ const PrivateRoutes = () => {
         <Route path="ofertaslaborales" element={<Ofertaslaborales />} />
          <Route path="estadopostulacion" element={<EstadoPostulacion />} />
         <Route path="faq" element={<Faq />} />
+         <Route path='/ofertaspostulante' element={<OfertasPostulante/>} />
+        <Route path='/ofertas' element={< FormularioOfertaFlowbite />} /> 
       </Route>
     </Routes>
   );
