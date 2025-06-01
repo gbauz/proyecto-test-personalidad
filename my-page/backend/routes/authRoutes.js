@@ -4,6 +4,7 @@ import { UserController } from '../controllers/UserController.js';
 import { OfertaController } from '../controllers/OfertaController.js';
 import multer from 'multer';
 import { PerfilController } from '../controllers/PerfilController.js';
+import { getTestPersonality } from '../controllers/TestController.js';
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ router.get('/roles', getRoles);
 router.get('/consultarusuarios', UserController.getUsuariosConRoles);
 router.post('/consultarusuarios/update', UserController.updateUserStructured);
 router.post('/consultarusuarios/delete', UserController.deleteUserStructured);
+
+router.get('/verTest/get', getTestPersonality);
+
+
 
 // Rutas ofertas
 router.post('/crearoferta', OfertaController.crearOferta);
@@ -33,5 +38,7 @@ router.post(
   ]),
   PerfilController.updatePerfil
 );
+
+
 
 export default router;
