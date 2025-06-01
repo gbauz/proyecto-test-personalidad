@@ -1,31 +1,10 @@
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  name         String
-  isActive     Boolean       @default(true)
-  roleId       Int
-  role         Role          @relation(fields: [roleId], references: [id])
-  createdAt    DateTime      @default(now())
-  ofertas       oferta[]      @relation("OfertasCreadas")
-  postulaciones postulacion[] @relation("PostulacionesHechas")
-  usuarioTests UsuarioTest[]
-}
-
-model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  isActive     Boolean       @default(true)
-  users User[]
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model oferta {
@@ -35,99 +14,155 @@ model oferta {
   sueldo        Float
   modalidad     String
   creadorId     Int
-  creador       User          @relation("OfertasCreadas", fields: [creadorId], references: [id])
-  postulaciones postulacion[]
   creadoEn      DateTime      @default(now())
-}
+  creador       user          @relation("OfertasCreadas", fields: [creadorId], references: [id])
+  postulaciones postulacion[]
 
+  @@index([creadorId], map: "oferta_creadorId_fkey")
+}
 
 model postulacion {
-  id            Int      @id @default(autoincrement())
-  ofertaId      Int
-  oferta        oferta   @relation(fields: [ofertaId], references: [id])
-  postulanteId  Int
-  postulante    User     @relation("PostulacionesHechas", fields: [postulanteId], references: [id])
-  fecha         DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  ofertaId     Int
+  postulanteId Int
+  fecha        DateTime @default(now())
+  oferta       oferta   @relation(fields: [ofertaId], references: [id])
+  postulante   user     @relation("PostulacionesHechas", fields: [postulanteId], references: [id])
+
+  @@index([ofertaId], map: "postulacion_ofertaId_fkey")
+  @@index([postulanteId], map: "postulacion_postulanteId_fkey")
 }
 
+model categoriadepreguntas {
+  id                    Int                     @id @default(autoincrement())
+  nombre                String
+  orden                 Int
+  tipoTestId            Int
+  isActive              Boolean                 @default(true)
+  tipotest              tipotest                @relation(fields: [tipoTestId], references: [id], map: "CategoriaDePreguntas_tipoTestId_fkey")
+  pregunta              pregunta[]
+  respuestasusuariotest respuestasusuariotest[]
 
-model UsuarioTest {
-  id         Int                    @id @default(autoincrement())
-  idUsuario  Int
-  isActive     Boolean       @default(true)
-  tipoTestId Int
-  codigo     String
-
-  usuario    User                   @relation(fields: [idUsuario], references: [id])
-  tipoTest   TipoTest               @relation(fields: [tipoTestId], references: [id])
-  respuestas RespuestasUsuarioTest[]
-  resultados ResultadosDeTest[]
+  @@index([tipoTestId], map: "CategoriaDePreguntas_tipoTestId_fkey")
 }
 
-model TipoTest {
-  id           Int                    @id @default(autoincrement())
-  nombre       String
-  isActive     Boolean       @default(true)
-  categorias   CategoriaDePreguntas[]
-  usuarioTests UsuarioTest[]
+model personalidades {
+  id               Int                @id @default(autoincrement())
+  nombre           String
+  keywords         String
+  descripcion      String?
+  isActive         Boolean            @default(true)
+  resultadosdetest resultadosdetest[]
 }
 
-model CategoriaDePreguntas {
-  id                Int                    @id @default(autoincrement())
-  nombre            String
-  orden             Int
-  isActive     Boolean       @default(true)
-  tipoTestId        Int
-  tipoTest          TipoTest               @relation(fields: [tipoTestId], references: [id])
-  preguntas         Pregunta[]
-  respuestasUsuario RespuestasUsuarioTest[]
+model pregunta {
+  id                    Int                     @id @default(autoincrement())
+  pregunta              String
+  categoriaPreguntasId  Int
+  isActive              Boolean                 @default(true)
+  categoriadepreguntas  categoriadepreguntas    @relation(fields: [categoriaPreguntasId], references: [id], map: "Pregunta_categoriaPreguntasId_fkey")
+  respuestasusuariotest respuestasusuariotest[]
+
+  @@index([categoriaPreguntasId], map: "Pregunta_categoriaPreguntasId_fkey")
 }
 
-model Pregunta {
-  id                   Int                   @id @default(autoincrement())
-  pregunta             String
-  categoriaPreguntasId Int
-  isActive     Boolean       @default(true)
-  categoriaPreguntas   CategoriaDePreguntas  @relation(fields: [categoriaPreguntasId], references: [id])
-  respuestasUsuario    RespuestasUsuarioTest[]
+model respuesta {
+  id                    Int                     @id @default(autoincrement())
+  nombre                String
+  puntaje               Int
+  isActive              Boolean                 @default(true)
+  respuestasusuariotest respuestasusuariotest[]
 }
 
-model Respuesta {
-  id                Int                   @id @default(autoincrement())
-  nombre            String
-  puntaje           Int
-  isActive     Boolean       @default(true)
-  respuestasUsuario RespuestasUsuarioTest[]
+model respuestasusuariotest {
+  id                   Int                  @id @default(autoincrement())
+  idUsuarioTest        Int
+  idRespuesta          Int
+  idPregunta           Int
+  idCategoria          Int
+  isActive             Boolean              @default(true)
+  categoriadepreguntas categoriadepreguntas @relation(fields: [idCategoria], references: [id], map: "RespuestasUsuarioTest_idCategoria_fkey")
+  pregunta             pregunta             @relation(fields: [idPregunta], references: [id], map: "RespuestasUsuarioTest_idPregunta_fkey")
+  respuesta            respuesta            @relation(fields: [idRespuesta], references: [id], map: "RespuestasUsuarioTest_idRespuesta_fkey")
+  usuariotest          usuariotest          @relation(fields: [idUsuarioTest], references: [id], map: "RespuestasUsuarioTest_idUsuarioTest_fkey")
+
+  @@index([idCategoria], map: "RespuestasUsuarioTest_idCategoria_fkey")
+  @@index([idPregunta], map: "RespuestasUsuarioTest_idPregunta_fkey")
+  @@index([idRespuesta], map: "RespuestasUsuarioTest_idRespuesta_fkey")
+  @@index([idUsuarioTest], map: "RespuestasUsuarioTest_idUsuarioTest_fkey")
 }
 
-model RespuestasUsuarioTest {
-  id             Int                  @id @default(autoincrement())
+model resultadosdetest {
+  id             Int            @id @default(autoincrement())
+  idDicotomia    Int
   idUsuarioTest  Int
-  idRespuesta    Int
-  idPregunta     Int
-  isActive     Boolean       @default(true)
-  idCategoria    Int
+  isActive       Boolean        @default(true)
+  personalidades personalidades @relation(fields: [idDicotomia], references: [id], map: "ResultadosDeTest_idDicotomia_fkey")
+  usuariotest    usuariotest    @relation(fields: [idUsuarioTest], references: [id], map: "ResultadosDeTest_idUsuarioTest_fkey")
 
-  usuarioTest    UsuarioTest          @relation(fields: [idUsuarioTest], references: [id])
-  respuesta      Respuesta            @relation(fields: [idRespuesta], references: [id])
-  pregunta       Pregunta             @relation(fields: [idPregunta], references: [id])
-  categoria      CategoriaDePreguntas @relation(fields: [idCategoria], references: [id])
+  @@index([idDicotomia], map: "ResultadosDeTest_idDicotomia_fkey")
+  @@index([idUsuarioTest], map: "ResultadosDeTest_idUsuarioTest_fkey")
 }
 
-model Personalidades {
-  id          Int               @id @default(autoincrement())
-  nombre      String
-  keywords    String
-  isActive     Boolean       @default(true)
-  descripcion String?
-  resultados  ResultadosDeTest[]
+model role {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique(map: "Role_name_key")
+  isActive Boolean @default(true)
+  user     user[]
 }
 
-model ResultadosDeTest {
-  id            Int          @id @default(autoincrement())
-  idDicotomia   Int
-  idUsuarioTest Int
-  isActive     Boolean       @default(true)
-  personalidades     Personalidades    @relation(fields: [idDicotomia], references: [id])
-  usuarioTest   UsuarioTest  @relation(fields: [idUsuarioTest], references: [id])
+model tipotest {
+  id                   Int                    @id @default(autoincrement())
+  nombre               String
+  isActive             Boolean                @default(true)
+  categoriadepreguntas categoriadepreguntas[]
+  usuariotest          usuariotest[]
+}
+
+model user {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique(map: "User_email_key")
+  password      String
+  name          String
+  roleId        Int
+  createdAt     DateTime      @default(now())
+  isActive      Boolean       @default(true)
+  ofertas       oferta[]      @relation("OfertasCreadas")
+  postulaciones postulacion[] @relation("PostulacionesHechas")
+  role          role          @relation(fields: [roleId], references: [id], map: "User_roleId_fkey")
+  usuariotest   usuariotest[]
+
+  perfil        perfil?       @relation("PerfilUser")
+
+  @@index([roleId], map: "User_roleId_fkey")
+}
+
+model usuariotest {
+  id                    Int                     @id @default(autoincrement())
+  idUsuario             Int
+  tipoTestId            Int
+  codigo                String
+  isActive              Boolean                 @default(true)
+  respuestasusuariotest respuestasusuariotest[]
+  resultadosdetest      resultadosdetest[]
+  user                  user                    @relation(fields: [idUsuario], references: [id], map: "UsuarioTest_idUsuario_fkey")
+  tipotest              tipotest                @relation(fields: [tipoTestId], references: [id], map: "UsuarioTest_tipoTestId_fkey")
+
+  @@index([idUsuario], map: "UsuarioTest_idUsuario_fkey")
+  @@index([tipoTestId], map: "UsuarioTest_tipoTestId_fkey")
+}
+
+model perfil {
+  id         Int    @id @default(autoincrement())
+  userId     Int    @unique
+  cedula     String
+  sexo       String
+  pais       String
+  ciudad     String
+  fotoPerfil String  // ruta o nombre del archivo
+  curriculum String  // ruta o nombre del archivo
+
+  user       user   @relation(fields: [userId], references: [id], name: "PerfilUser")
+
+  @@index([userId])
 }

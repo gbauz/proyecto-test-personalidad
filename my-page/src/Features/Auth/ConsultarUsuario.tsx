@@ -6,7 +6,7 @@ import {
   RoleOption,
   updateUsuarioStructured,
   deleteUsuarioStructured,
-} from "./api";
+} from "./apiUsuarios";
 
 function ConsultarUsuario() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);

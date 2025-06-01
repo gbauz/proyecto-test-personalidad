@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obtenerOfertasParaPostulante } from "./api"; // asegúrate de que apunta bien
+import { obtenerOfertasParaPostulante } from "./apiOfertas"; // asegúrate de que apunta bien
 import { useNavigate } from "react-router-dom";
 
 interface Oferta {

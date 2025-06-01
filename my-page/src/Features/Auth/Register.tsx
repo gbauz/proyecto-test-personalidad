@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser, RegisterPayload, RoleOption, fetchRoles } from "./api";
+import { registerUser, RegisterPayload, RoleOption, fetchRoles } from "./apiRegister";
 import SweetAlertLike from "../../components/SweetAlertLike";
 
 const Register = () => {
