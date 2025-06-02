@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTestPreguntas } from './api';
-import { TestPersonality } from './api'; // Asegúrate que esta interfaz esté bien definida
+import { TestPersonality } from './api';
 
 const MBTIQuestionPage = () => {
   const [preguntas, setPreguntas] = useState<TestPersonality[]>([]);
@@ -8,10 +8,26 @@ const MBTIQuestionPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [result, setResult] = useState<string | null>(null);
+  const [categoriaActualIndex, setCategoriaActualIndex] = useState(0);
+  const [userId, setUserId] = useState<string>('');
+
 
   useEffect(() => {
     cargarPreguntas();
+    obtenerUsuarioId();
   }, []);
+
+
+  
+  const obtenerUsuarioId = () => {
+    const idUsuario = localStorage.getItem("userId")
+    if(idUsuario !== null){
+      setUserId(idUsuario)
+    }
+  }
+
+  console.log("xddd",userId)
+
 
   const cargarPreguntas = async () => {
     setLoading(true);
@@ -22,8 +38,7 @@ const MBTIQuestionPage = () => {
         setError(res.message || "No se pudieron obtener las preguntas.");
         return;
       }
-
-      setPreguntas(res.data); // <-- Guardamos las preguntas aquí
+      setPreguntas(res.data);
     } catch {
       setError("Error al conectar con el servidor.");
       setPreguntas([]);
@@ -32,19 +47,17 @@ const MBTIQuestionPage = () => {
     }
   };
 
-  const handleSelect = (questionIndex: number, value: number) => {
-    setAnswers((prev) => ({ ...prev, [questionIndex]: value }));
+  const handleSelect = (questionId: number, value: number) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const getCircleStyle = (value: number, selected: boolean) => {
     const sizeMap = {
-      3: 'w-16 h-16',
-      2: 'w-14 h-14',
+      2: 'w-16 h-16',
       1: 'w-12 h-12',
       0: 'w-10 h-10',
       '-1': 'w-12 h-12',
-      '-2': 'w-14 h-14',
-      '-3': 'w-16 h-16'
+      '-2': 'w-16 h-16'
     };
 
     const baseClass = `rounded-full border-4 flex items-center justify-center transition-transform duration-200 overflow-hidden shadow-lg bg-white`;
@@ -54,32 +67,26 @@ const MBTIQuestionPage = () => {
     return `${baseClass} ${sizeClass} ${ringClass}`;
   };
 
-
-  const preguntasOrdenadas = [...preguntas].sort((a, b) =>
-  a.categoria.localeCompare(b.categoria)
-);
-
-// Agrupar preguntas por categoría
-const preguntasPorCategoria = preguntas.reduce((acc, pregunta) => {
-  if (!acc[pregunta.categoria]) acc[pregunta.categoria] = [];
-  acc[pregunta.categoria].push(pregunta);
-  return acc;
-}, {} as Record<string, TestPersonality[]>);
-
-
-
   const getFaceUrl = (value: number) => {
     switch (value) {
-      case 3: return "https://i.ibb.co/hxp3m422/happy.png";
-      case 2: return "https://i.ibb.co/23yrWpP0/smiling.png";
+      case 2: return "https://i.ibb.co/hxp3m422/happy.png";
       case 1: return "https://i.ibb.co/G4Wx52t2/smile.png";
       case 0: return "https://i.ibb.co/DfWyDM0z/confused.png";
       case -1: return "https://i.ibb.co/BVJKw26B/sad-3.png";
-      case -2: return "https://i.ibb.co/rKQ42LN3/sad-face.png";
-      case -3: return "https://i.ibb.co/Mydqjr61/angry-3.png";
+      case -2: return "https://i.ibb.co/Mydqjr61/angry-3.png";
       default: return "https://cdn-icons-png.flaticon.com/512/6141/6141082.png";
     }
   };
+
+  const preguntasPorCategoria = preguntas.reduce((acc, pregunta) => {
+    if (!acc[pregunta.categoria]) acc[pregunta.categoria] = [];
+    acc[pregunta.categoria].push(pregunta);
+    return acc;
+  }, {} as Record<string, TestPersonality[]>);
+
+  const categorias = Object.keys(preguntasPorCategoria);
+  const categoriaActual = categorias[categoriaActualIndex];
+  const preguntasCategoria = preguntasPorCategoria[categoriaActual] || [];
 
   const handleSubmit = () => {
     if (Object.keys(answers).length < preguntas.length) {
@@ -104,41 +111,58 @@ const preguntasPorCategoria = preguntas.reduce((acc, pregunta) => {
       {loading && <p className="text-center text-gray-600">Cargando preguntas...</p>}
       {error && <p className="text-center text-red-600">{error}</p>}
 
-      {Object.entries(preguntasPorCategoria).map(([categoria, preguntasCategoria]) => (
-  <div key={categoria} className="mb-10">
-    <h2 className="text-2xl font-bold text-center mb-6 text-[#EB4B15]">{categoria}</h2>
-    
-    {preguntasCategoria.map((pregunta, i) => (
-      <div key={pregunta.id} className="mb-12">
-        <p className="text-xl font-semibold text-center text-black mb-6">{pregunta.pregunta}</p>
-        <div className="flex items-center justify-center gap-4">
-          <span className="text-md text-[#EB4B15] font-medium">De acuerdo</span>
-          <div className="flex gap-3">
-            {[3, 2, 1, 0, -1, -2, -3].map((opt) => (
-              <button
-                key={opt}
-                onClick={() => handleSelect(pregunta.id, opt)}
-                className={getCircleStyle(opt, answers[pregunta.id] === opt)}
-              >
-                <img src={getFaceUrl(opt)} alt={`respuesta ${opt}`} className="w-full h-full object-contain" />
-              </button>
-            ))}
-          </div>
-          <span className="text-md text-black font-medium">En desacuerdo</span>
+      {!loading && !error && (
+        <div key={categoriaActual} className="mb-10">
+          <h2 className="text-2xl font-bold text-center mb-6 text-[#EB4B15]">{categoriaActual}</h2>
+
+          {preguntasCategoria.map((pregunta) => (
+            <div key={pregunta.id} className="mb-12">
+              <p className="text-xl font-semibold text-center text-black mb-6">{pregunta.pregunta}</p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-md text-[#EB4B15] font-medium">De acuerdo</span>
+                <div className="flex gap-3">
+                  {[2, 1, 0, -1, -2].map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => handleSelect(pregunta.id, opt)}
+                      className={getCircleStyle(opt, answers[pregunta.id] === opt)}
+                    >
+                      <img src={getFaceUrl(opt)} alt={`respuesta ${opt}`} className="w-full h-full object-contain" />
+                    </button>
+                  ))}
+                </div>
+                <span className="text-md text-black font-medium">En desacuerdo</span>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-))}
+      )}
 
-
-      <div className="flex justify-center mt-8">
+      {/* Navegación por categorías */}
+      <div className="flex justify-between mt-8">
         <button
-          onClick={handleSubmit}
-          className="bg-[#EB4B15] text-white font-semibold py-3 px-8 rounded-full shadow-md hover:bg-orange-600 transition-all duration-200"
+          disabled={categoriaActualIndex === 0}
+          onClick={() => setCategoriaActualIndex((i) => i - 1)}
+          className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50"
         >
-          Enviar respuestas
+          Anterior
         </button>
+
+        {categoriaActualIndex === categorias.length - 1 ? (
+          <button
+            onClick={handleSubmit}
+            className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
+          >
+            Enviar respuestas
+          </button>
+        ) : (
+          <button
+            onClick={() => setCategoriaActualIndex((i) => i + 1)}
+            className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
+          >
+            Siguiente
+          </button>
+        )}
       </div>
 
       {result && (

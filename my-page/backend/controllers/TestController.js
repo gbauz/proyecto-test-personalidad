@@ -79,26 +79,69 @@ const apiResponse = (isSuccess, message, data = null) => ({
 // };
 
 
-
-
 export const getTestPersonality = async (req, res) => {
-    try {
-      const test = await prisma.pregunta.findMany({ include: { categoriaPreguntas: true } });
+  try {
+    const test = await prisma.pregunta.findMany({
+      where: {
+        categoriaPreguntas: {
+          tipoTestId: 1,
+        },
+      },
+      include: {
+        categoriaPreguntas: true,
+      },
+    });
 
-      const data = test.map(u => ({
-        id: u.id,
-        pregunta: u.pregunta,
-        categoriaPreguntasId: u.categoriaPreguntasId,
-        categoria: u.categoriaPreguntas.nombre,
-        ordenCategoria: u.categoriaPreguntas.orden,
-      }));
+    const data = test.map(u => ({
+      id: u.id,
+      pregunta: u.pregunta,
+      categoriaPreguntasId: u.categoriaPreguntasId,
+      categoria: u.categoriaPreguntas.nombre,
+      ordenCategoria: u.categoriaPreguntas.orden,
+      tipoTestId: u.categoriaPreguntas.tipoTestId,
+    }));
 
-      res.json(apiResponse(true, 'Usuarios obtenidos correctamente', data));
-    } catch (error) {
-      console.error(error);
-      res.status(500).json(apiResponse(false, 'Error al obtener usuarios'));
-    }
-}
+    res.json(apiResponse(true, 'Preguntas de tipo test obtenidas correctamente', data));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(apiResponse(false, 'Error al obtener preguntas de tipo test'));
+  }
+};
+
+export const getRespuestasActivas = async (req, res) => {
+  try {
+    const respuestas = await prisma.respuesta.findMany({
+      where: { isActive: true },
+      orderBy: { puntaje: 'desc' }, // Orden natural: positivo a negativo
+    });
+
+    res.json(apiResponse(true, 'Respuestas activas obtenidas correctamente', respuestas));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(apiResponse(false, 'Error al obtener respuestas'));
+  }
+};
+
+
+
+// export const getTestPersonality = async (req, res) => {
+//     try {
+//       const test = await prisma.pregunta.findMany({ include: { categoriaPreguntas: true } });
+
+//       const data = test.map(u => ({
+//         id: u.id,
+//         pregunta: u.pregunta,
+//         categoriaPreguntasId: u.categoriaPreguntasId,
+//         categoria: u.categoriaPreguntas.nombre,
+//         ordenCategoria: u.categoriaPreguntas.orden,
+//       }));
+
+//       res.json(apiResponse(true, 'Usuarios obtenidos correctamente', data));
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json(apiResponse(false, 'Error al obtener usuarios'));
+//     }
+// }
 
 
 // export const getRoles = async (req, res) => {
