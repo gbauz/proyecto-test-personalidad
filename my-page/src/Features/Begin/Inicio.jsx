@@ -31,6 +31,29 @@ const MBTITestPage = () => {
     return <Preguntas />;
   }
 
+
+
+  const iniciarTest = async () => {
+  try {
+    if (!userId) return;
+
+    const res = await post({
+      idUsuario: parseInt(userId),
+      tipoTestId: 1 // o el ID que corresponda a MBTI
+    });
+
+    if (res.isSuccess && res.data?.idUsuarioTest) {
+      setIdUsuarioTest(res.data.idUsuarioTest);
+      localStorage.setItem("idUsuarioTest", res.data.idUsuarioTest.toString());
+    } else {
+      console.error("No se pudo iniciar el test:", res.message);
+    }
+  } catch (error) {
+    console.error("Error al iniciar el test:", error);
+  }
+};
+
+
   return (
     <div className="bg-white min-h-screen flex flex-col items-center px-4 py-10">
       <Motion.h1 

@@ -79,6 +79,35 @@ const apiResponse = (isSuccess, message, data = null) => ({
 // };
 
 
+export const iniciarTest = async (req, res) => {
+  const { idUsuario, tipoTestId } = req.body;
+
+  if (!idUsuario || !tipoTestId) {
+    return res.status(400).json({ isSuccess: false, message: 'Datos incompletos.' });
+  }
+
+  try {
+    const nuevoTest = await prisma.usuarioTest.create({
+      data: {
+        idUsuario,
+        tipoTestId,
+        isActive: true,
+        codigo: `TEST-${Date.now()}` // o un UUID
+      }
+    });
+
+    res.json({
+      isSuccess: true,
+      message: 'Test iniciado.',
+      data: { idUsuarioTest: nuevoTest.id }
+    });
+  } catch (error) {
+    console.error('Error al iniciar test:', error);
+    res.status(500).json({ isSuccess: false, message: 'Error al iniciar el test.' });
+  }
+};
+
+
 export const getTestPersonality = async (req, res) => {
   try {
     const test = await prisma.pregunta.findMany({
