@@ -9,6 +9,8 @@ interface Perfil {
   ciudad: string;
   fotoPerfil?: string;
   curriculum?: string;
+  name?: string;
+  email?: string;
 }
 
 const Perfil = () => {
@@ -18,12 +20,15 @@ const Perfil = () => {
     sexo: "",
     pais: "",
     ciudad: "",
+    name: "",
+    email: "",
   });
+
   const [fotoPerfilFile, setFotoPerfilFile] = useState<File | null>(null);
   const [curriculumFile, setCurriculumFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const userIdStr = localStorage.getItem("userId");
   const userId = userIdStr ? Number(userIdStr) : null;
 
@@ -32,27 +37,35 @@ const Perfil = () => {
       setError("Debes iniciar sesión para acceder al perfil");
       return;
     }
+
     setLoading(true);
     fetchPerfilByUserId(userId)
       .then(({ isSuccess, data }) => {
-        if (isSuccess && data) setPerfil(data);
-        else setPerfil(prev => ({ ...prev, userId: userId }));
+        console.log("✅ Datos recibidos del perfil:", data); // Debug
+        if (isSuccess && data) {
+          setPerfil(data);
+        } else {
+          setPerfil(prev => ({ ...prev, userId }));
+        }
       })
       .catch(() => setError("Error al cargar perfil"))
       .finally(() => setLoading(false));
   }, [userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setPerfil({ ...perfil, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setPerfil(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
     if (!userId) {
       setError("UserId no definido, inicia sesión primero");
       return;
     }
+
     setLoading(true);
     try {
       const formData = new FormData();
@@ -61,12 +74,15 @@ const Perfil = () => {
       formData.append("sexo", perfil.sexo);
       formData.append("pais", perfil.pais);
       formData.append("ciudad", perfil.ciudad);
+      formData.append("name", perfil.name || "");
+      formData.append("email", perfil.email || "");
       if (fotoPerfilFile) formData.append("fotoPerfil", fotoPerfilFile);
       if (curriculumFile) formData.append("curriculum", curriculumFile);
 
       const res = await updatePerfil(formData);
       alert(res.message);
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Error al actualizar perfil");
     } finally {
       setLoading(false);
@@ -75,32 +91,58 @@ const Perfil = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4 text-center" style={{ color: "black" }}>Editar Perfil</h2>
+      <h2 className="text-xl font-semibold mb-4 text-center text-black">Editar Perfil</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {loading && <p className="mb-4 text-center">Cargando...</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Nombre */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>Cédula</label>
+          <label className="block mb-1 font-semibold text-black">Nombre</label>
+          <input
+            type="text"
+            name="name"
+            value={perfil.name || ""}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block mb-1 font-semibold text-black">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={perfil.email || ""}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
+          />
+        </div>
+
+        {/* Cédula */}
+        <div>
+          <label className="block mb-1 font-semibold text-black">Cédula</label>
           <input
             type="text"
             name="cedula"
             value={perfil.cedula}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border rounded border-gray-300"
-            style={{ color: "black" }}
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
           />
         </div>
 
+        {/* Sexo */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>Sexo</label>
+          <label className="block mb-1 font-semibold text-black">Sexo</label>
           <select
             name="sexo"
             value={perfil.sexo}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border rounded border-gray-300"
-            style={{ color: "black" }}
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
           >
             <option value="">Seleccione</option>
             <option value="M">Masculino</option>
@@ -109,40 +151,40 @@ const Perfil = () => {
           </select>
         </div>
 
+        {/* País */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>País</label>
+          <label className="block mb-1 font-semibold text-black">País</label>
           <input
             type="text"
             name="pais"
             value={perfil.pais}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border rounded border-gray-300"
-            style={{ color: "black" }}
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
           />
         </div>
 
+        {/* Ciudad */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>Ciudad</label>
+          <label className="block mb-1 font-semibold text-black">Ciudad</label>
           <input
             type="text"
             name="ciudad"
             value={perfil.ciudad}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border rounded border-gray-300"
-            style={{ color: "black" }}
+            className="w-full px-3 py-2 border rounded border-gray-300 text-black"
           />
         </div>
 
+        {/* Foto de perfil */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>Foto de Perfil</label>
+          <label className="block mb-1 font-semibold text-black">Foto de Perfil</label>
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setFotoPerfilFile(e.target.files ? e.target.files[0] : null)}
+            onChange={(e) => setFotoPerfilFile(e.target.files?.[0] || null)}
             className="w-full"
-            style={{ color: "black" }}
           />
           {perfil.fotoPerfil && (
             <img
@@ -153,14 +195,14 @@ const Perfil = () => {
           )}
         </div>
 
+        {/* Currículum */}
         <div>
-          <label className="block mb-1 font-semibold" style={{ color: "black" }}>Currículum (PDF)</label>
+          <label className="block mb-1 font-semibold text-black">Currículum (PDF)</label>
           <input
             type="file"
             accept="application/pdf"
-            onChange={(e) => setCurriculumFile(e.target.files ? e.target.files[0] : null)}
+            onChange={(e) => setCurriculumFile(e.target.files?.[0] || null)}
             className="w-full"
-            style={{ color: "black" }}
           />
           {perfil.curriculum && (
             <a
@@ -174,11 +216,12 @@ const Perfil = () => {
           )}
         </div>
 
+        {/* Botón */}
         <button
           type="submit"
           disabled={loading}
           className={`w-full py-2 rounded text-white font-semibold transition ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
+            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
           }`}
         >
           {loading ? "Guardando..." : "Guardar"}

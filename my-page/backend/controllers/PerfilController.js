@@ -9,63 +9,76 @@ const UPLOAD_DIR_FOTOS = path.join(process.cwd(), "uploads", "fotos");
 const UPLOAD_DIR_CV = path.join(process.cwd(), "uploads", "cv");
 
 export class PerfilController {
-  // Obtener perfil de un usuario por id
+  // Obtener perfil con name/email del user
   static async getPerfilByUserId(req, res) {
     const userId = Number(req.params.userId);
     try {
       const perfil = await prisma.perfil.findUnique({
         where: { userId },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
       });
+
       if (!perfil) {
         return res.json(apiResponse(true, "Perfil no encontrado", null));
       }
-      res.json(apiResponse(true, "Perfil encontrado", perfil));
+
+      const responsePerfil = {
+        ...perfil,
+        name: perfil.user.name,
+        email: perfil.user.email,
+      };
+
+      delete responsePerfil.user;
+
+      res.json(apiResponse(true, "Perfil encontrado", responsePerfil));
     } catch (error) {
-      console.error(error);
+      console.error("❌ Error al obtener perfil:", error);
       res.status(500).json(apiResponse(false, "Error al obtener perfil"));
     }
   }
 
-  // Actualizar perfil con datos y archivos (foto y curriculum)
+  // Actualizar perfil y user
   static async updatePerfil(req, res) {
     try {
-      const userId = Number(req.body.userId);
-      const { cedula, sexo, pais, ciudad } = req.body;
+      console.log("📥 req.body:", req.body);
+      console.log("📂 req.files:", req.files);
+
+      const fields = req.body;
+      const userId = Number(fields.userId);
+      const { cedula, sexo, pais, ciudad, name, email } = fields;
 
       if (!userId) return res.status(400).json(apiResponse(false, "Falta userId"));
 
-      // Preparar data a actualizar
-      const dataToUpdate = {
-        cedula,
-        sexo,
-        pais,
-        ciudad,
-      };
+      const dataToUpdate = { cedula, sexo, pais, ciudad };
 
-      // Manejar archivos subidos (fotoPerfil y curriculum)
-      if (req.files) {
-        // Fotos
-        if (req.files.fotoPerfil) {
-          const fotoFile = req.files.fotoPerfil[0];
-          // Mover archivo a carpeta fotos
-          const newFotoPath = path.join("uploads", "fotos", fotoFile.originalname);
-          await fs.rename(fotoFile.path, newFotoPath);
-          dataToUpdate.fotoPerfil = newFotoPath;
-        }
+      // Procesar archivos
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          if (file.fieldname === "fotoPerfil") {
+            const newFotoPath = path.join("uploads", "fotos", file.originalname);
+            await fs.rename(file.path, newFotoPath);
+            dataToUpdate.fotoPerfil = newFotoPath;
+          }
 
-        // Curriculum
-        if (req.files.curriculum) {
-          const cvFile = req.files.curriculum[0];
-          const newCvPath = path.join("uploads", "cv", cvFile.originalname);
-          await fs.rename(cvFile.path, newCvPath);
-          dataToUpdate.curriculum = newCvPath;
+          if (file.fieldname === "curriculum") {
+            const newCvPath = path.join("uploads", "cv", file.originalname);
+            await fs.rename(file.path, newCvPath);
+            dataToUpdate.curriculum = newCvPath;
+          }
         }
       }
 
-      // Verificar si ya existe perfil para el usuario
+      // Actualizar o crear perfil
+      let perfil;
       const existingPerfil = await prisma.perfil.findUnique({ where: { userId } });
 
-      let perfil;
       if (existingPerfil) {
         perfil = await prisma.perfil.update({
           where: { userId },
@@ -80,9 +93,17 @@ export class PerfilController {
         });
       }
 
-      res.json(apiResponse(true, "Perfil actualizado", perfil));
+      // Actualizar tabla user
+      if (name && email) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { name, email },
+        });
+      }
+
+      res.json(apiResponse(true, "Perfil actualizado correctamente", perfil));
     } catch (error) {
-      console.error(error);
+      console.error("❌ Error al actualizar perfil:", error);
       res.status(500).json(apiResponse(false, "Error al actualizar perfil"));
     }
   }

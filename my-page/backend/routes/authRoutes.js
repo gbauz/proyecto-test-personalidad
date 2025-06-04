@@ -1,45 +1,31 @@
-
-import { Router } from 'express';
+import express from 'express';
+import multer from 'multer';
 import { login, register, getRoles } from '../controllers/AuthController.js';
 import { UserController } from '../controllers/UserController.js';
 import { OfertaController } from '../controllers/OfertaController.js';
-import multer from 'multer';
 import { PerfilController } from '../controllers/PerfilController.js';
-import { getTestPersonality } from '../controllers/TestController.js';
 
-const authRouter = Router();
+const router = express.Router();
+const upload = multer({ dest: 'temp/' }); // directorio temporal
 
-const upload = multer({ dest: 'temp/' }); // carpeta temporal para archivos
+// Auth
+router.post('/login', login);
+router.post('/register', register);
+router.get('/roles', getRoles);
 
-// Rutas Auth y Usuarios
-authRouter.post('/login', login);
-authRouter.post('/register', register);
-authRouter.get('/roles', getRoles);
+// Usuarios
+router.get('/consultarusuarios', UserController.getUsuariosConRoles);
+router.post('/consultarusuarios/update', UserController.updateUserStructured);
+router.post('/consultarusuarios/delete', UserController.deleteUserStructured);
 
-authRouter.get('/consultarusuarios', UserController.getUsuariosConRoles);
-authRouter.post('/consultarusuarios/update', UserController.updateUserStructured);
-authRouter.post('/consultarusuarios/delete', UserController.deleteUserStructured);
+// Ofertas
+router.post('/crearoferta', OfertaController.crearOferta);
+router.get('/verofertas', OfertaController.obtenerOfertasParaPostulantes);
 
-authRouter.get('/test/get', getTestPersonality);
+// Perfil
+router.get('/perfil/:userId', PerfilController.getPerfilByUserId);
 
+// ✅ USAR .any() para soportar archivos + campos de texto (como name/email)
+router.post('/perfil/update', upload.any(), PerfilController.updatePerfil);
 
-
-// Rutas ofertas
-authRouter.post('/crearoferta', OfertaController.crearOferta);
-authRouter.get('/verofertas', OfertaController.obtenerOfertasParaPostulantes);
-
-// Rutas perfil con subida de archivos
-authRouter.get('/perfil/:userId', PerfilController.getPerfilByUserId);
-
-authRouter.post(
-  '/perfil/update',
-  upload.fields([
-    { name: 'fotoPerfil', maxCount: 1 },
-    { name: 'curriculum', maxCount: 1 },
-  ]),
-  PerfilController.updatePerfil
-);
-
-
-
-export default authRouter;
+export default router;

@@ -66,13 +66,7 @@ const SideBar = ({ isOpen }) => {
                   <FilePlus className="w-5 h-5" />
                   <span>Crear Ofertas</span>
                 </Link>
-              </li>
-              <li>
-                <Link to="/perfil" className={navItemClass("/perfil")}>
-                  <User className="w-5 h-5" />
-                  <span>Mi perfil</span>
-                </Link>
-              </li>
+              </li>             
               <li>
                 <Link to="/faq" className={navItemClass("/faq")}>
                   <FileQuestion className="w-5 h-5" />
@@ -98,7 +92,7 @@ const SideBar = ({ isOpen }) => {
           {rol === "Postulante" && (
             <>  
           <li>
-            <Link to="/report" className={navItemClass("/report")}>
+            <Link to="/perfil" className={navItemClass("/report")}>
               <BarChart2 className="w-5 h-5" />
               <span>Mi perfil</span>
             </Link>

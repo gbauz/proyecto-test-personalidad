@@ -21,6 +21,12 @@ const OfertasPostulante = () => {
   const [filtroModalidad, setFiltroModalidad] = useState("");
   const [busqueda, setBusqueda] = useState("");
 
+  // Estados para el modal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [ofertaSeleccionada, setOfertaSeleccionada] = useState<Oferta | null>(null);
+  const [postulando, setPostulando] = useState(false);
+  const [mensajePostulacion, setMensajePostulacion] = useState("");
+
   const userId = Number(localStorage.getItem("userId"));
   const roleName = localStorage.getItem("roleName");
   const navigate = useNavigate();
@@ -61,6 +67,43 @@ const OfertasPostulante = () => {
 
     return coincideBusqueda && coincideModalidad;
   });
+
+  // Abrir modal para confirmar postulación
+  const abrirModal = (oferta: Oferta) => {
+    setOfertaSeleccionada(oferta);
+    setMensajePostulacion("");
+    setModalVisible(true);
+  };
+
+  // Cerrar modal
+  const cerrarModal = () => {
+    setModalVisible(false);
+    setOfertaSeleccionada(null);
+    setMensajePostulacion("");
+  };
+
+  // Confirmar postulación, cerrar modal y navegar
+  const confirmarPostulacion = async () => {
+    if (!ofertaSeleccionada) return;
+
+    setPostulando(true);
+
+    try {
+      // Simulación de llamada a API
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setMensajePostulacion("¡Postulación exitosa!");
+
+      // Cerrar modal y navegar a estado postulacion
+      setModalVisible(false);
+      setOfertaSeleccionada(null);
+      navigate("/estadopostulacion");
+    } catch {
+      setMensajePostulacion("Error al postular. Intenta nuevamente.");
+    } finally {
+      setPostulando(false);
+    }
+  };
 
   if (error) {
     return <div className="text-red-500 text-center mt-5">{error}</div>;
@@ -117,8 +160,56 @@ const OfertasPostulante = () => {
                 Publicado por: {oferta.creador.name} —{" "}
                 {new Date(oferta.creadoEn).toLocaleDateString()}
               </p>
+              <button
+                onClick={() => abrirModal(oferta)}
+                className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Postular
+              </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal de confirmación */}
+      {modalVisible && ofertaSeleccionada && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 max-w-md w-full shadow-lg">
+            <h3 className="text-xl font-semibold mb-4">Confirmar postulación</h3>
+            <p className="mb-4">
+              ¿Estás seguro de que deseas postularte para la oferta{" "}
+              <strong>{ofertaSeleccionada.nombre}</strong>?
+            </p>
+
+            {mensajePostulacion && (
+              <p
+                className={`mb-4 ${
+                  mensajePostulacion.includes("exitosa")
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {mensajePostulacion}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={cerrarModal}
+                disabled={postulando}
+                className="px-4 py-2 border rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmarPostulacion}
+                disabled={postulando}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              >
+                {postulando ? "Procesando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -126,3 +217,4 @@ const OfertasPostulante = () => {
 };
 
 export default OfertasPostulante;
+
