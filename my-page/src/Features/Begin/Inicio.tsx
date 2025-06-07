@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import Preguntas from '../Preguntas/Preguntas'; // Asegúrate de que la ruta es correcta
+import { crearTest } from './apiBegin';
 
 const MBTITestPage = () => {
   const [mostrarPreguntas, setMostrarPreguntas] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
 
   const features = [
     {
@@ -31,27 +35,42 @@ const MBTITestPage = () => {
     return <Preguntas />;
   }
 
+   
 
+const iniciarTest = async () => {
+  setError("");
+  setLoading(true);
 
-  const iniciarTest = async () => {
+  const userId = Number(localStorage.getItem("userId"));
+  if (!userId) {
+    setError("Usuario no autenticado.");
+    setLoading(false);
+    return;
+  }
+
   try {
-    if (!userId) return;
-
-    const res = await post({
-      idUsuario: parseInt(userId),
-      tipoTestId: 1 // o el ID que corresponda a MBTI
+    const res = await crearTest({
+      idUsuario: userId,
+      tipoTestId: 1,
     });
 
-    if (res.isSuccess && res.data?.idUsuarioTest) {
-      setIdUsuarioTest(res.data.idUsuarioTest);
-      localStorage.setItem("idUsuarioTest", res.data.idUsuarioTest.toString());
+    if (res.isSuccess) {
+      // Guardar ID si lo necesitas
+      // localStorage.setItem("idUsuarioTest", res.data.idUsuarioTest?.toString());
+
+      // Mostrar preguntas si el test fue creado correctamente
+      setMostrarPreguntas(true);
     } else {
-      console.error("No se pudo iniciar el test:", res.message);
+      setError(res.message || "No se pudo iniciar el test.");
     }
-  } catch (error) {
-    console.error("Error al iniciar el test:", error);
+  } catch (err) {
+    console.error("Error al iniciar el test:", err);
+    setError("Error inesperado al conectar con el servidor.");
+  } finally {
+    setLoading(false);
   }
 };
+
 
 
   return (
@@ -93,12 +112,12 @@ const MBTITestPage = () => {
           </Motion.div>
         ))}
       </div>
-
+{error && <p className="text-red-600 mt-4">{error}</p>}
       <Motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="mt-12 bg-[#EB4B15] hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg transition-all duration-200"
-        onClick={() => setMostrarPreguntas(true)}
+        onClick={iniciarTest}
         aria-label="Comenzar test de personalidad MBTI"
       >
         ¡Comenzar ahora! <ArrowRight size={18} />

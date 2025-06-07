@@ -17,6 +17,7 @@ export interface RespuestasTestPersonality {
 }
 
 
+
 export interface crearTest {
   idUsuario: number,
   tipoTestId: number,
@@ -28,8 +29,8 @@ export interface idUsuarioTestInterface {
 }
 
 const BASE_URL_TEST = "http://localhost:3001/api";
-const TEST_URL = "/test";
-const VER_TEST_URL_API = `${BASE_URL_TEST}/${TEST_URL}`;
+const TEST_URL = "test";
+export const VER_TEST_URL_API = `${BASE_URL_TEST}/${TEST_URL}`;
 
 
 export const getTestPreguntas = async (): Promise<ApiResponse<TestPersonality[]>> => {
