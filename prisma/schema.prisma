@@ -143,6 +143,7 @@ model usuariotest {
   tipoTestId            Int
   codigo                String
   isActive              Boolean                 @default(true)
+  testCompleted         Boolean                 @default(false)  
   respuestasusuariotest respuestasusuariotest[]
   resultadosdetest      resultadosdetest[]
   user                  user                    @relation(fields: [idUsuario], references: [id], map: "UsuarioTest_idUsuario_fkey")

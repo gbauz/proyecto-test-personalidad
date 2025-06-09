@@ -9,6 +9,7 @@ export interface UserLoginResponse {
   id: number;
   nombre: string;
   roleName: string;
+  testCompleted: string;
 }
 
 export interface LoginData {

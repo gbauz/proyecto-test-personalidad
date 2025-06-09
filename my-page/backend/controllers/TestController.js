@@ -11,27 +11,33 @@ const apiResponse = (isSuccess, message, data = null) => ({
 });
 
 export const verificarTest = async (req, res) => {
-try {
-    const {idUsuario} = req.body;
-    // Verifica si ya existe CUALQUIER test creado por el usuario
+  try {
+    const { idUsuario } = req.body;
+
+    if (!idUsuario) {
+      return res.status(400).json(apiResponse(false, "Falta el ID del usuario."));
+    }
+
     const testExistente = await prisma.usuariotest.findFirst({
-      where: {
-        idUsuario,
-      },
+      where: { idUsuario },
     });
 
     if (testExistente) {
-      return res.json({ isSuccess: true, data: { idUsuarioTest: testExistente.id } });
+      return res.json(
+        apiResponse(true, "Ya se ha llenado el test.", {
+          idUsuarioTest: testExistente.id,
+        })
+      );
     } else {
-      return res.json({ isSuccess: true, data: null });
+      return res.json(apiResponse(true, "No hay test existente.", null));
     }
   } catch (err) {
-    console.error("xd",err);
-    return res.status(500).json({ isSuccess: false, message: "Error al buscar test." });
+    console.error("Error al verificar test:", err);
+    return res
+      .status(500)
+      .json(apiResponse(false, "Error al buscar test."));
   }
-
-}
-
+};
 
 
 export const iniciarTest = async (req, res) => {
@@ -78,52 +84,27 @@ export const iniciarTest = async (req, res) => {
   }
 };
 
-// export const iniciarTest = async (req, res) => {
-//   const { idUsuario, tipoTestId } = req.body;
+export const eliminarTestNoCompletado = async (req, res) => {
+  const { idUsuario } = req.body;
 
-//   // Validación de datos
-//   if (typeof idUsuario !== 'number' || typeof tipoTestId !== 'number') {
-//     return res.status(400).json(apiResponse(false, 'Datos inválidos.'));
-//   }
+  if (typeof idUsuario !== 'number') {
+    return res.status(400).json(apiResponse(false, 'ID de usuario inválido.'));
+  }
 
-//   try {
-//     // Verificar si ya existe un test activo para este usuario y tipo de test
-//     const testExistente = await prisma.usuariotest.findFirst({
-//       where: {
-//         idUsuario,
-//         tipoTestId,
-//         isActive: true,
-//       },
-//     });
+  try {
+    // Borra los tests asociados al usuario (frontend valida si debe eliminarse o no)
+    const deleted = await prisma.usuariotest.deleteMany({
+      where: {
+        idUsuario,
+      },
+    });
 
-//     if (testExistente) {
-//       return res
-//         .status(409)
-//         .json(apiResponse(false, 'Ya tienes un test activo de este tipo.'));
-//     }
-
-//     // Crear un nuevo test
-//     const nuevoTest = await prisma.usuariotest.create({
-//       data: {
-//         idUsuario,
-//         tipoTestId,
-//         isActive: true,
-//         codigo: `TEST-${uuidv4()}`,
-//       },
-//     });
-
-//     return res.json(
-//       apiResponse(true, 'Test iniciado.', {
-//         idUsuarioTest: nuevoTest.id,
-//       })
-//     );
-//   } catch (error) {
-//     console.error('Error al iniciar test:', error);
-//     return res
-//       .status(500)
-//       .json(apiResponse(false, 'Error interno al iniciar el test.'));
-//   }
-// }
+    return res.json(apiResponse(true, 'Test eliminado correctamente.', { count: deleted.count }));
+  } catch (error) {
+    console.error('Error al eliminar test:', error);
+    return res.status(500).json(apiResponse(false, 'Error al eliminar el test.'));
+  }
+};
 
 
 

@@ -13,6 +13,7 @@ import ConsultarUsuario from '../Features/Auth/ConsultarUsuario';
 import EstadoPostulacion from '../Features/Estado/EstadoPostulacion';
 import OfertasPostulante from '../Features/Auth/OfertaPostulante';
 import Postulacion from '../Features/OfertasLaborales/OfertasLaborales';
+import TestsLlenadosPage from '../Features/Preguntas/VerTest';
 import FormularioOfertaFlowbite from '../Features/Auth/CrearOferta';
 import Perfil from '../Features/Auth/Perfil';
 const PrivateRoutes = () => {
@@ -49,6 +50,8 @@ const PrivateRoutes = () => {
          <Route path='/ofertaspostulante' element={<OfertasPostulante/>} />
         <Route path='/ofertas' element={< FormularioOfertaFlowbite />} /> 
         <Route path='/perfil' element={< Perfil />} /> 
+        <Route path='/crearTest' element={< MBTIQuestionPage />} />
+        <Route path='/verTest' element={< TestsLlenadosPage />} />
       </Route>
     </Routes>
   );

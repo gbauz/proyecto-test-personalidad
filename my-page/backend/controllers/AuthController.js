@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import test from 'node:test';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = 'tu_clave_secreta';
@@ -43,7 +44,10 @@ export const login = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { role: true },
+      include: { role: true,
+                 usuariotest: true, // 👈 esto es clave
+       },
+      
     });
 
     if (!user) {
@@ -67,7 +71,7 @@ export const login = async (req, res) => {
 
     res.json(apiResponse(true, 'Login exitoso', {
       token,
-      user: { id: user.id, nombre: user.name, roleName: user.role.name },
+      user: { id: user.id, nombre: user.name, roleName: user.role.name, testCompleted: user?.usuariotest[0]?.testCompleted || false},
     }));
   } catch (error) {
     console.error(error);

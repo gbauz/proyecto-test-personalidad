@@ -212,7 +212,7 @@ const MBTIQuestionPage = () => {
         <div className="mt-12 text-center">
           <h2 className="text-2xl font-bold text-black mb-4">Resultado del Test</h2>
           <p className="text-lg text-gray-700">
-            Tu tipo MBTI simulado es: <span className="font-semibold text-[#EB4B15]">{result}</span>
+            Tu tipo MBTI es: <span className="font-semibold text-[#EB4B15]">{result}</span>
           </p>
         </div>
       )}

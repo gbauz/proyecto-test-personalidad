@@ -44,15 +44,6 @@ const SideBar = ({ isOpen }) => {
             </Link>
           </li>
           )}
-           {rol === "Administrador" && (
-          <li>
-            <Link to="/dashboardAdmin" className={navItemClass("/dashboardAdmin")}>
-              <Home className="w-5 h-5" />
-              <span>Inicio</span>
-            </Link>
-          </li>
-          )}
-
           {rol === "Recursos Humanos" && (
             <>
               <li>
@@ -107,6 +98,12 @@ const SideBar = ({ isOpen }) => {
             <Link to="/ofertaspostulante" className={navItemClass("/ofertaspostulante")}>
               <BarChart2 className="w-5 h-5" />
               <span>Mis Postulaciones</span>
+            </Link>
+            </li>
+             <li>
+            <Link to="/verTest" className={navItemClass("/verTest")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Ver Test</span>
             </Link>
             </li>
           </>

@@ -31,7 +31,8 @@ const Login = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('nombre', user.nombre);
       localStorage.setItem('userId', user.id.toString());
-      localStorage.setItem('rolName', user.roleName); // 👈 CAMBIO CRÍTICO AQUÍ
+      localStorage.setItem('rolName', user.roleName); // 👈 CAMBIO CRÍTICO AQUÍ}
+      localStorage.setItem('testCompleted', user.testCompleted)
 
       window.dispatchEvent(new Event('authChanged'));
 

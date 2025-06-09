@@ -46,11 +46,12 @@ const Header = ({ toggleSidebar }) => {
   // Cierre de sesión
   const handleLogout = () => {
     setDropdownOpen(false);
-    localStorage.removeItem("persist:root");
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre");
-    localStorage.removeItem("rolName");
-    localStorage.removeItem("userId");
+    // localStorage.removeItem("persist:root");
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("nombre");
+    // localStorage.removeItem("rolName");
+    // localStorage.removeItem("userId");
+    localStorage.clear();
     navigate('/login');
   };
 
