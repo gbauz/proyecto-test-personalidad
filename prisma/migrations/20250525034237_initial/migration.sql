@@ -82,7 +82,7 @@ CREATE TABLE `Personalidades` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(191) NOT NULL,
     `keywords` VARCHAR(191) NOT NULL,
-    `descripcion` VARCHAR(191) NULL,
+    `descripcion` VARCHAR(2000) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

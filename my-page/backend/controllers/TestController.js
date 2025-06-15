@@ -10,6 +10,105 @@ const apiResponse = (isSuccess, message, data = null) => ({
   data,
 });
 
+
+export const postRespuestas = async (req, res) => {
+  const lista = req.body;
+
+  if (!Array.isArray(lista) || lista.length === 0) {
+    return res.status(400).json(apiResponse(false, 'El cuerpo debe ser una lista de objetos'));
+  }
+
+  const usuarioTestId = lista[0]?.idUsuarioTest;
+  if (!usuarioTestId) {
+    return res.status(400).json(apiResponse(false, 'Falta idUsuarioTest'));
+  }
+
+  try {
+    // Guardar respuestas
+    await prisma.respuestasusuariotest.createMany({
+      data: lista,
+      skipDuplicates: false,
+    });
+
+    // Marcar test como completado
+    await prisma.usuariotest.update({
+      where: { id: usuarioTestId },
+      data: { testCompleted: true },
+    });
+
+    // Obtener categorías
+    const categorias = await prisma.categoriadepreguntas.findMany();
+
+    // Obtener respuestas con preguntas
+    const respuestasConPreguntas = await prisma.respuestasusuariotest.findMany({
+      where: { idUsuarioTest: usuarioTestId },
+      include: {
+        pregunta: true,
+      },
+    });
+
+    const resultados = [];
+
+    for (const categoria of categorias) {
+       const [letra1, letra2] = categoria.nombre.split('/');
+
+  const respuestasDeCategoria = respuestasConPreguntas.filter(
+    (r) => r.pregunta.categoriaPreguntasId === categoria.id
+  );
+
+  let total = 0;
+
+  for (const respuesta of respuestasDeCategoria) {
+    const valor = respuesta.valorLikert; // entre 1 y 5
+    const direccion = respuesta.pregunta.letraAsociada; // por ejemplo: "E"
+
+    // Normaliza a -2 ... +2
+    const peso = valor - 3;
+
+    // Si la letra favorecida es la primera (letra1), sumamos el puntaje
+    // Si es la segunda, restamos
+    if (direccion === letra1) {
+      total += peso;
+    } else {
+      total -= peso;
+    }
+  }
+
+  const letraElegida = total >= 0 ? letra1 : letra2;
+  resultados.push(letraElegida);
+    }
+
+    const tipoMBTI = resultados.join('');
+
+    const personalidad = await prisma.personalidades.findFirst({
+      where: { nombre: tipoMBTI },
+    });
+
+    if (!personalidad) {
+      return res.status(404).json(apiResponse(false, `Tipo MBTI '${tipoMBTI}' no reconocido`));
+    }
+
+    await prisma.resultadosdetest.create({
+      data: {
+        idUsuarioTest: usuarioTestId,
+        idDicotomia: personalidad.id, // Cambia nombre si corresponde
+        isActive: true,
+      },
+    });
+
+    return res.json(apiResponse(true, 'Test completado correctamente', {
+      tipoMBTI,
+      personalidad: personalidad.nombre,
+      descripcion: personalidad.descripcion,
+      keywords: personalidad.keywords,
+    }));
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(apiResponse(false, 'Error interno del servidor'));
+  }
+};
+
+
 export const verificarTest = async (req, res) => {
   try {
     const { idUsuario } = req.body;
@@ -150,3 +249,5 @@ export const getRespuestasActivas = async (req, res) => {
     res.status(500).json(apiResponse(false, 'Error al obtener respuestas'));
   }
 };
+
+

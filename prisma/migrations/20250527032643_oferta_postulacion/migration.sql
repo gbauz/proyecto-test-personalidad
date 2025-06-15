@@ -2,7 +2,7 @@
 CREATE TABLE `oferta` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(191) NOT NULL,
-    `descripcion` VARCHAR(191) NOT NULL,
+    `descripcion` VARCHAR(2000) NOT NULL,
     `sueldo` DOUBLE NOT NULL,
     `modalidad` VARCHAR(191) NOT NULL,
     `creadorId` INTEGER NOT NULL,
