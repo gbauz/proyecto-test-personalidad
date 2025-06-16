@@ -81,37 +81,71 @@ const MBTITestPage = () => {
     }
   };
 
-  // ✅ Inicia nuevo test si no existe
-  const iniciarTest = async () => {
-    if (!userId) {
-      setError("Usuario no autenticado.");
-      return;
-    }
+  // // ✅ Inicia nuevo test si no existe
+  // const iniciarTest = async () => {
+  //   if (!userId) {
+  //     setError("Usuario no autenticado.");
+  //     return;
+  //   }
 
-    setLoading(true);
-    try {
-      const res = await crearTest({
-        idUsuario: userId,
-        tipoTestId: 1,
-      });
+  //   setLoading(true);
+  //   try {
+  //     const res = await crearTest({
+  //       idUsuario: userId,
+  //       tipoTestId: 1,
+  //     });
 
-      if (res?.isSuccess == true) {
-        const testId = res.data.idUsuario;
-        setIdUsuarioTest(testId);
-        localStorage.setItem("idUsuarioTest", testId?.toString());
-        setMostrarPreguntas(true); 
-      } else {
-        setError(res?.message || "No se pudo iniciar el test.");
-      }
-       navigate("/crearTest")
+  //     if (res?.isSuccess == true) {
+  //       const testId = res.data.idUsuarioTest
+  //       setIdUsuarioTest(testId);
+     
+        
+  //       localStorage.setItem("idUsuarioTest", idUsuarioTest?.toString());
+  //       setMostrarPreguntas(true); 
+  //     } else {
+  //       setError(res?.message || "No se pudo iniciar el test.");
+  //     }
+  //      navigate("/crearTest")
       
-    } catch (err) {
-      console.error("Error al iniciar el test:", err);
-      setError("Error inesperado al conectar con el servidor.");
-    } finally {
-      setLoading(false);
+  //   } catch (err) {
+  //     console.error("Error al iniciar el test:", err);
+  //     setError("Error inesperado al conectar con el servidor.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+const iniciarTest = async () => {
+  if (!userId) {
+    setError("Usuario no autenticado.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const res = await crearTest({
+      idUsuario: userId,
+      tipoTestId: 1,
+    });
+
+    if (res?.isSuccess === true) {
+      const testId = res.data.idUsuarioTest;
+      setIdUsuarioTest(testId);
+
+      localStorage.setItem("idUsuarioTest", testId.toString());
+      setMostrarPreguntas(true);
+      navigate("/crearTest");
+    } else {
+      setError(res?.message || "No se pudo iniciar el test.");
     }
-  };
+  } catch (err) {
+    console.error("Error al iniciar el test:", err);
+    setError("Error inesperado al conectar con el servidor.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ✅ Continuar test existente
   const verTestCreado = () => {

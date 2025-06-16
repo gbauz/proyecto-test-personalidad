@@ -28,6 +28,28 @@ export interface idUsuarioTestInterface {
   idUsuario: number,
 }
 
+export interface RespuestaUsuarioTest {
+  id: number;
+  idUsuarioTest: number;
+  idRespuesta: number;
+  idPregunta: number;
+  idCategoria: number;
+  isActive: boolean;
+}
+
+export interface ResultadoTestMBTI {
+  tipoMBTI: string;
+  personalidad: string;
+  descripcion: string;
+  keywords: string;
+}
+
+export interface SelectedAnswer {
+  respuestaId: number;
+  puntaje: number;
+}
+
+
 const BASE_URL_TEST = "http://localhost:3001/api";
 const TEST_URL = "test";
 export const VER_TEST_URL_API = `${BASE_URL_TEST}/${TEST_URL}`;
@@ -50,3 +72,11 @@ export const postUsuarioTest = async (data: crearTest): Promise<ApiResponse<idUs
   return response.data;
 };
 
+
+
+export const enviarTestRespuestas = async (
+  respuestas: RespuestaUsuarioTest[]
+): Promise<ApiResponse<ResultadoTestMBTI>> => {
+  const response = await axios.post(`${VER_TEST_URL_API}/llenarTest`, respuestas);
+  return response.data;
+};

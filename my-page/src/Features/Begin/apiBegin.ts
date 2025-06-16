@@ -12,6 +12,7 @@ export interface VerificarTestInterface {
   idUsuario: number,
 }
 
+
 export interface ResponseDataVerificarTestInterface {
   idUsuarioTest: number,
 }
@@ -23,7 +24,7 @@ interface EliminarTestResponse {
 
 export const crearTest = async (
   data: CrearTestInterface
-): Promise<ApiResponse<VerificarTestInterface>> => {
+): Promise<ApiResponse<ResponseDataVerificarTestInterface>> => {
   const response = await axios.post(`${VER_TEST_URL_API}/crearTest`, data);
   return response.data;
 };
