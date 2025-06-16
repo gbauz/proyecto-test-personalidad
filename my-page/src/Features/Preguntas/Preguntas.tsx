@@ -8,6 +8,8 @@ import {
   RespuestaUsuarioTest,
 } from './api';
 
+import ResultadoMBTI from './ResultadoMBTI';
+
 interface SelectedAnswer {
   respuestaId: number;
   puntaje: number;
@@ -20,9 +22,17 @@ const MBTIQuestionPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<string | null>(null);
-  const [descripcion, setDescripcion] = useState<string | null>(null);
-  const [keywords, setKeywords] = useState<string | null>(null);
+  // const [descripcion, setDescripcion] = useState<string | null>(null);
+  // const [keywords, setKeywords] = useState<string | null>(null);
   const [categoriaActualIndex, setCategoriaActualIndex] = useState(0);
+  const [mostrarModalResultado, setMostrarModalResultado] = useState(false);
+const [datosResultado, setDatosResultado] = useState<{
+  tipoMBTI: string;
+  personalidad: string;
+  descripcion: string;
+  keywords: string;
+} | null>(null);
+
 
   useEffect(() => {
     cargarPreguntas();
@@ -119,12 +129,11 @@ const MBTIQuestionPage = () => {
     try {
       const res = await enviarTestRespuestas(payload);
       if (res.isSuccess) {
-        const { tipoMBTI, personalidad, descripcion, keywords } = res.data;
-        setResult(`${tipoMBTI} - ${personalidad}`);
-        setDescripcion(descripcion);
-        setKeywords(keywords);
-        localStorage.setItem("testCompleted", "true");
-      } else {
+  setDatosResultado(res.data);
+  setMostrarModalResultado(true);
+  localStorage.setItem("testCompleted", "true");
+}
+ else {
         setError(res.message || "Error al enviar el test.");
       }
     } catch (err) {
@@ -133,80 +142,78 @@ const MBTIQuestionPage = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-white px-4 py-10 max-w-4xl mx-auto overflow-y-auto">
-      <h1 className="text-4xl font-bold text-center text-black mb-12">Test de Personalidad MBTI</h1>
-      {loading && <p className="text-center text-gray-600">Cargando preguntas...</p>}
-      {error && <p className="text-center text-red-600">{error}</p>}
+ return (
+  <div className="min-h-screen bg-white px-4 py-10 max-w-4xl mx-auto overflow-y-auto">
+    <h1 className="text-4xl font-bold text-center text-black mb-12">Test de Personalidad MBTI</h1>
 
-      {!loading && !error && respuestas.length > 0 && (
-        <div key={categoriaActual} className="mb-10">
-          <h2 className="text-2xl font-bold text-center mb-6 text-[#EB4B15]">{categoriaActual}</h2>
-          {preguntasCategoria.map((pregunta) => (
-            <div key={pregunta.id} className="mb-12">
-              <p className="text-xl font-semibold text-center text-black mb-6">{pregunta.pregunta}</p>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
-                {respuestas
-                  .sort((a, b) => b.puntaje - a.puntaje)
-                  .map((opcion) => (
-                    <div key={opcion.id} className="flex flex-col items-center w-24">
-                      <button
-                        onClick={() => handleSelect(pregunta.id, opcion.id, opcion.puntaje)}
-                        className={getCircleStyle(opcion.puntaje, answers[pregunta.id]?.respuestaId === opcion.id)}
-                      >
-                        <img
-                          src={getFaceUrl(opcion.puntaje)}
-                          alt={`respuesta ${opcion.puntaje}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </button>
-                      <span className="text-sm mt-2 text-center text-gray-700">{opcion.nombre}</span>
-                    </div>
-                  ))}
-              </div>
+    {loading && <p className="text-center text-gray-600">Cargando preguntas...</p>}
+    {error && <p className="text-center text-red-600">{error}</p>}
+
+    {!loading && !error && respuestas.length > 0 && (
+      <div key={categoriaActual} className="mb-10">
+        <h2 className="text-2xl font-bold text-center mb-6 text-[#EB4B15]">{categoriaActual}</h2>
+        {preguntasCategoria.map((pregunta) => (
+          <div key={pregunta.id} className="mb-12">
+            <p className="text-xl font-semibold text-center text-black mb-6">{pregunta.pregunta}</p>
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              {respuestas
+                .sort((a, b) => b.puntaje - a.puntaje)
+                .map((opcion) => (
+                  <div key={opcion.id} className="flex flex-col items-center w-24">
+                    <button
+                      onClick={() => handleSelect(pregunta.id, opcion.id, opcion.puntaje)}
+                      className={getCircleStyle(opcion.puntaje, answers[pregunta.id]?.respuestaId === opcion.id)}
+                    >
+                      <img
+                        src={getFaceUrl(opcion.puntaje)}
+                        alt={`respuesta ${opcion.puntaje}`}
+                        className="w-full h-full object-contain"
+                      />
+                    </button>
+                    <span className="text-sm mt-2 text-center text-gray-700">{opcion.nombre}</span>
+                  </div>
+                ))}
             </div>
-          ))}
-        </div>
-      )}
-
-      <div className="flex justify-between mt-8">
-        <button
-          disabled={categoriaActualIndex === 0}
-          onClick={() => setCategoriaActualIndex((i) => i - 1)}
-          className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50"
-        >
-          Anterior
-        </button>
-
-        {categoriaActualIndex === categorias.length - 1 ? (
-          <button
-            onClick={enviarRespuestas}
-            className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
-          >
-            Enviar respuestas
-          </button>
-        ) : (
-          <button
-            onClick={() => setCategoriaActualIndex((i) => i + 1)}
-            className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
-          >
-            Siguiente
-          </button>
-        )}
+          </div>
+        ))}
       </div>
+    )}
 
-      {result && (
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold text-black mb-4">Resultado del Test</h2>
-          <p className="text-lg text-gray-700 mb-2">
-            Tu tipo MBTI es: <span className="font-semibold text-[#EB4B15]">{result}</span>
-          </p>
-          {descripcion && <p className="text-gray-700 max-w-2xl mx-auto mb-4">{descripcion}</p>}
-          {keywords && <p className="text-sm text-gray-500 italic">Palabras clave: {keywords}</p>}
-        </div>
+    <div className="flex justify-between mt-8">
+      <button
+        disabled={categoriaActualIndex === 0}
+        onClick={() => setCategoriaActualIndex((i) => i - 1)}
+        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50"
+      >
+        Anterior
+      </button>
+
+      {categoriaActualIndex === categorias.length - 1 ? (
+        <button
+          onClick={enviarRespuestas}
+          className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
+        >
+          Enviar respuestas
+        </button>
+      ) : (
+        <button
+          onClick={() => setCategoriaActualIndex((i) => i + 1)}
+          className="px-6 py-2 bg-[#EB4B15] text-white rounded-full hover:bg-orange-600"
+        >
+          Siguiente
+        </button>
       )}
     </div>
-  );
+
+    {/* MODAL DE RESULTADO */}
+    <ResultadoMBTI
+      open={mostrarModalResultado}
+      resultado={datosResultado}
+      onClose={() => setMostrarModalResultado(false)}
+    />
+  </div>
+);
+
 };
 
 export default MBTIQuestionPage;

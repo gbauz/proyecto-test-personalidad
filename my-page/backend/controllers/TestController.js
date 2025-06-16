@@ -11,102 +11,6 @@ const apiResponse = (isSuccess, message, data = null) => ({
 });
 
 
-// export const postRespuestas = async (req, res) => {
-//   const lista = req.body;
-
-//   if (!Array.isArray(lista) || lista.length === 0) {
-//     return res.status(400).json(apiResponse(false, 'El cuerpo debe ser una lista de objetos'));
-//   }
-
-//   const usuarioTestId = lista[0]?.idUsuarioTest;
-//   if (!usuarioTestId) {
-//     return res.status(400).json(apiResponse(false, 'Falta idUsuarioTest'));
-//   }
-
-//   try {
-//     // Guardar respuestas
-//     await prisma.respuestasusuariotest.createMany({
-//       data: lista,
-//       skipDuplicates: false,
-//     });
-
-//     // Marcar test como completado
-//     await prisma.usuariotest.update({
-//       where: { id: usuarioTestId },
-//       data: { testCompleted: true },
-//     });
-
-//     // Obtener categorías
-//     const categorias = await prisma.categoriadepreguntas.findMany();
-
-//     // Obtener respuestas con preguntas
-//     const respuestasConPreguntas = await prisma.respuestasusuariotest.findMany({
-//       where: { idUsuarioTest: usuarioTestId },
-//       include: {
-//         pregunta: true,
-//       },
-//     });
-
-//     const resultados = [];
-
-//     for (const categoria of categorias) {
-//        const [letra1, letra2] = categoria.nombre.split('/');
-
-//   const respuestasDeCategoria = respuestasConPreguntas.filter(
-//     (r) => r.pregunta.categoriaPreguntasId === categoria.id
-//   );
-
-//   let total = 0;
-
-//   for (const respuesta of respuestasDeCategoria) {
-//     const valor = respuesta.valorLikert; // entre 1 y 5
-//     const direccion = respuesta.pregunta.letraAsociada; // por ejemplo: "E"
-
-//     // Normaliza a -2 ... +2
-//     const peso = valor - 3;
-
-//     // Si la letra favorecida es la primera (letra1), sumamos el puntaje
-//     // Si es la segunda, restamos
-//     if (direccion === letra1) {
-//       total += peso;
-//     } else {
-//       total -= peso;
-//     }
-//   }
-
-//   const letraElegida = total >= 0 ? letra1 : letra2;
-//   resultados.push(letraElegida);
-//     }
-
-//     const tipoMBTI = resultados.join('');
-
-//     const personalidad = await prisma.personalidades.findFirst({
-//       where: { nombre: tipoMBTI },
-//     });
-
-//     if (!personalidad) {
-//       return res.status(404).json(apiResponse(false, `Tipo MBTI '${tipoMBTI}' no reconocido`));
-//     }
-
-//     await prisma.resultadosdetest.create({
-//       data: {
-//         idUsuarioTest: usuarioTestId,
-//         idDicotomia: personalidad.id, // Cambia nombre si corresponde
-//         isActive: true,
-//       },
-//     });
-
-//     return res.json(apiResponse(true, 'Test completado correctamente', {
-//       tipoMBTI,
-//       personalidad: personalidad.nombre,
-//       descripcion: personalidad.descripcion,
-//       keywords: personalidad.keywords,
-//     }));
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json(apiResponse(false, 'Error interno del servidor'));
-//   }
-// };
 
 
 export const postRespuestas = async (req, res) => {
@@ -203,102 +107,6 @@ export const postRespuestas = async (req, res) => {
 };
 
 
-
-// export const postRespuestas = async (req, res) => {
-//   const lista = req.body;
-
-//   if (!Array.isArray(lista) || lista.length === 0) {
-//     return res.status(400).json(apiResponse(false, 'El cuerpo debe ser una lista de objetos'));
-//   }
-
-//   const usuarioTestId = lista[0]?.idUsuarioTest;
-//   if (!usuarioTestId) {
-//     return res.status(400).json(apiResponse(false, 'Falta idUsuarioTest'));
-//   }
-
-//   try {
-//     // Guardar respuestas
-//     await prisma.respuestasusuariotest.createMany({
-//       data: lista,
-//       skipDuplicates: false,
-//     });
-
-//     // Marcar test como completado
-//     await prisma.usuariotest.update({
-//       where: { id: usuarioTestId },
-//       data: { testCompleted: true },
-//     });
-
-//     // Obtener categorías
-//     const categorias = await prisma.categoriadepreguntas.findMany();
-
-//     // Obtener respuestas con preguntas y respuestas (incluye puntaje)
-//     const respuestasConPreguntas = await prisma.respuestasusuariotest.findMany({
-//       where: { idUsuarioTest: usuarioTestId },
-//       include: {
-//         pregunta: true,
-//         respuesta: true, // ✅ Agregado para acceder al puntaje
-//       },
-//     });
-
-//     const resultados = [];
-
-//     for (const categoria of categorias) {
-//       const [letra1, letra2] = categoria.nombre.split('/');
-
-//       const respuestasDeCategoria = respuestasConPreguntas.filter(
-//         (r) => r.pregunta.categoriaPreguntasId === categoria.id
-//       );
-
-//       let total = 0;
-
-//       for (const respuesta of respuestasDeCategoria) {
-//         const puntaje = respuesta.respuesta.puntaje; // ✅ se obtiene desde la relación
-//         const direccion = respuesta.pregunta.letraAsociada;
-
-//         // Suma o resta dependiendo de la dirección
-//         if (direccion === letra1) {
-//           total += puntaje;
-//         } else {
-//           total -= puntaje;
-//         }
-//       }
-
-//       const letraElegida = total >= 0 ? letra1 : letra2;
-//       resultados.push(letraElegida);
-//     }
-
-//     const tipoMBTI = resultados.join('');
-
-//     const personalidad = await prisma.personalidades.findFirst({
-//       where: { nombre: tipoMBTI },
-//     });
-
-//     if (!personalidad) {
-//       return res.status(404).json(apiResponse(false, `Tipo MBTI '${tipoMBTI}' no reconocido`));
-//     }
-
-//     await prisma.resultadosdetest.create({
-//       data: {
-//         idUsuarioTest: usuarioTestId,
-//         idDicotomia: personalidad.id,
-//         isActive: true,
-//       },
-//     });
-
-//     return res.json(apiResponse(true, 'Test completado correctamente', {
-//       tipoMBTI,
-//       personalidad: personalidad.nombre,
-//       descripcion: personalidad.descripcion,
-//       keywords: personalidad.keywords,
-//     }));
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json(apiResponse(false, 'Error interno del servidor'));
-//   }
-// };
-
-
 export const verificarTest = async (req, res) => {
   try {
     const { idUsuario } = req.body;
@@ -372,6 +180,168 @@ export const iniciarTest = async (req, res) => {
       .json(apiResponse(false, 'Error interno al iniciar el test.'));
   }
 };
+
+// export const obtenerTestsCompletados = async (req, res) => {
+//   try {
+//     const { idUsuario, personalidad, desde, hasta, nombre } = req.query;
+
+//     // Construir filtro de fechas
+//     const rangoFechas = {};
+//     if (desde && !isNaN(Date.parse(desde))) {
+//       rangoFechas.gte = new Date(desde);
+//     }
+//     if (hasta && !isNaN(Date.parse(hasta))) {
+//       rangoFechas.lte = new Date(new Date(hasta).setHours(23, 59, 59, 999))
+//     }
+
+//     // Construir filtro de usuariotest combinando nombre y idUsuario
+//     const filtroUsuarioTest = {};
+//     if (idUsuario) {
+//       filtroUsuarioTest.idUsuario = Number(idUsuario);
+//     }
+//     if (nombre) {
+//       filtroUsuarioTest.user = {
+//         name: {
+//           contains: nombre,
+//         },
+//       };
+//     }
+
+//     const filtros = {
+//       isActive: true,
+//       ...(Object.keys(filtroUsuarioTest).length > 0 && {
+//         usuariotest: filtroUsuarioTest,
+//       }),
+//       ...(personalidad && {
+//         personalidades: {
+//           nombre: {
+//             contains: personalidad,
+//           },
+//         },
+//       }),
+//       ...(Object.keys(rangoFechas).length > 0 && {
+//         createdAt: rangoFechas,
+//       }),
+//     };
+
+//     const resultados = await prisma.resultadosdetest.findMany({
+//       where: filtros,
+//       include: {
+//         personalidades: true,
+//         usuariotest: {
+//           include: {
+//             user: {
+//               select: {
+//                 id: true,
+//                 name: true,
+//                 email: true,
+//                 roleId: true,
+//                 isActive: true,
+//               },
+//             },
+//           },
+//         },
+//       },
+//       orderBy: {
+//         createdAt: "desc",
+//       },
+//     });
+
+//     return res.json({
+//       isSuccess: true,
+//       message: "Tests obtenidos correctamente",
+//       data: resultados,
+//     });
+//   } catch (error) {
+//     console.error("Error al obtener tests completados:", error);
+//     return res.status(500).json({
+//       isSuccess: false,
+//       message: "Error del servidor",
+//     });
+//   }
+// };
+
+
+export const obtenerTestsCompletados = async (req, res) => {
+  try {
+    const { idUsuario, personalidad, desde, hasta, nombre } = req.query;
+
+    const filtros = {
+      isActive: true,
+      ...(idUsuario && {
+        usuariotest: {
+          idUsuario: Number(idUsuario),
+        },
+      }),
+      ...(personalidad && {
+        personalidades: {
+          nombre: {
+            contains: personalidad,
+          },
+        },
+      }),
+      ...(desde || hasta
+        ? {
+            createdAt: {
+              ...(desde ? { gte: new Date(desde) } : {}),
+              ...(hasta
+                ? {
+                    lte: new Date(
+                      new Date(hasta).setHours(23, 59, 59, 999)
+                    ),
+                  }
+                : {}),
+            },
+          }
+        : {}),
+      ...(nombre && {
+        usuariotest: {
+          user: {
+            name: {
+              contains: nombre,
+            },
+          },
+        },
+      }),
+    };
+
+    const resultados = await prisma.resultadosdetest.findMany({
+      where: filtros,
+      include: {
+        personalidades: true,
+        usuariotest: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                roleId: true,
+                isActive: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return res.json({
+      isSuccess: true,
+      message: 'Tests obtenidos correctamente',
+      data: resultados,
+    });
+  } catch (error) {
+    console.error('Error al obtener tests completados:', error);
+    return res.status(500).json({
+      isSuccess: false,
+      message: 'Error del servidor',
+    });
+  }
+};
+
 
 export const eliminarTestNoCompletado = async (req, res) => {
   const { idUsuario } = req.body;

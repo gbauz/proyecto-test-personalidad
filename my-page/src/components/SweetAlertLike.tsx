@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 interface SweetAlertProps {
   title: string;
-  message: string;
+  message: string | React.ReactNode;
   onConfirm: () => void;
   icon?: string;
   autoCloseDelay?: number; // opcional, en ms

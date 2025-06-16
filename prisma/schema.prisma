@@ -97,6 +97,7 @@ model resultadosdetest {
   idDicotomia    Int
   idUsuarioTest  Int
   isActive       Boolean        @default(true)
+  createdAt      DateTime @default(now())  
   personalidades personalidades @relation(fields: [idDicotomia], references: [id], map: "ResultadosDeTest_idDicotomia_fkey")
   usuariotest    usuariotest    @relation(fields: [idUsuarioTest], references: [id], map: "ResultadosDeTest_idUsuarioTest_fkey")
 
