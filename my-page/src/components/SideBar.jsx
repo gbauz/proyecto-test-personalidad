@@ -64,6 +64,12 @@ const SideBar = ({ isOpen }) => {
                   <span>FAQ</span>
                 </Link>
               </li>
+               <li>
+            <Link to="/verTest" className={navItemClass("/verTest")}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Ver Test</span>
+            </Link>
+            </li>
               <li>
                 <button
                   onClick={() => {
@@ -76,6 +82,7 @@ const SideBar = ({ isOpen }) => {
                   <span>Cerrar sesión</span>
                 </button>
               </li>
+              
             </>
           )}
          

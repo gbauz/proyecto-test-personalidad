@@ -25,6 +25,7 @@ model postulacion {
   id           Int      @id @default(autoincrement())
   ofertaId     Int
   postulanteId Int
+  createdAt      DateTime @default(now()) 
   fecha        DateTime @default(now())
   oferta       oferta   @relation(fields: [ofertaId], references: [id])
   postulante   user     @relation("PostulacionesHechas", fields: [postulanteId], references: [id])
@@ -143,6 +144,7 @@ model usuariotest {
   idUsuario             Int
   tipoTestId            Int
   codigo                String
+  createdAt      DateTime @default(now()) 
   isActive              Boolean                 @default(true)
   testCompleted         Boolean                 @default(false)  
   respuestasusuariotest respuestasusuariotest[]
@@ -161,6 +163,7 @@ model perfil {
   sexo       String
   pais       String
   ciudad     String
+  createdAt      DateTime @default(now()) 
   fotoPerfil String  // ruta o nombre del archivo
   curriculum String  // ruta o nombre del archivo
 

@@ -50,6 +50,46 @@ export interface SelectedAnswer {
 }
 
 
+export interface TestCompletado {
+  id: number;
+  idDicotomia: number;
+  idUsuarioTest: number;
+  isActive: boolean;
+  createdAt: string;
+  personalidades: {
+    id: number;
+    nombre: string;
+    keywords: string;
+    descripcion: string;
+    isActive: boolean;
+  };
+  usuariotest: {
+    id: number;
+    idUsuario: number;
+    tipoTestId: number;
+    codigo: string;
+    isActive: boolean;
+    testCompleted: boolean;
+    user: {
+      id: number;
+      name: string;
+      email: string;
+      roleId: number;
+      isActive: boolean;
+    };
+  };
+}
+
+
+export interface FiltrosTestCompletado {
+  idUsuario?: number;
+  personalidad?: string;
+  desde?: string; // formato: 'YYYY-MM-DD'
+  hasta?: string;
+  nombre?: string;
+}
+
+
 const BASE_URL_TEST = "http://localhost:3001/api";
 const TEST_URL = "test";
 export const VER_TEST_URL_API = `${BASE_URL_TEST}/${TEST_URL}`;
@@ -60,7 +100,20 @@ export const getTestPreguntas = async (): Promise<ApiResponse<TestPersonality[]>
   return response.data;
 };
 
+export const obtenerTestsCompletados = async (
+  filtros: FiltrosTestCompletado
+): Promise<ApiResponse<TestCompletado[]>> => {
+  const params = new URLSearchParams();
 
+  if (filtros.idUsuario) params.append("idUsuario", filtros.idUsuario.toString());
+  if (filtros.personalidad) params.append("personalidad", filtros.personalidad);
+  if (filtros.desde) params.append("desde", filtros.desde);
+  if (filtros.hasta) params.append("hasta", filtros.hasta);
+  if (filtros.nombre) params.append("nombre", filtros.nombre);
+
+  const response = await axios.get(`${BASE_URL_TEST}/${TEST_URL}/completados?${params.toString()}`);
+  return response.data;
+};
 
 export const getTestRespuestas = async (): Promise<ApiResponse<RespuestasTestPersonality[]>> => {
   const response = await axios.get(`${VER_TEST_URL_API}/getRespuestasActivas`);

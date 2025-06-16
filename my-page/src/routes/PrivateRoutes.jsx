@@ -16,6 +16,7 @@ import Postulacion from '../Features/OfertasLaborales/OfertasLaborales';
 import TestsLlenadosPage from '../Features/Preguntas/VerTest';
 import FormularioOfertaFlowbite from '../Features/Auth/CrearOferta';
 import Perfil from '../Features/Auth/Perfil';
+import TestList from '../Features/Preguntas/TestList';
 const PrivateRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
@@ -51,7 +52,7 @@ const PrivateRoutes = () => {
         <Route path='/ofertas' element={< FormularioOfertaFlowbite />} /> 
         <Route path='/perfil' element={< Perfil />} /> 
         <Route path='/crearTest' element={< MBTIQuestionPage />} />
-        <Route path='/verTest' element={< TestsLlenadosPage />} />
+        <Route path='/verTest' element={< TestList />} />
       </Route>
     </Routes>
   );
