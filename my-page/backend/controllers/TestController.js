@@ -181,85 +181,7 @@ export const iniciarTest = async (req, res) => {
   }
 };
 
-// export const obtenerTestsCompletados = async (req, res) => {
-//   try {
-//     const { idUsuario, personalidad, desde, hasta, nombre } = req.query;
 
-//     // Construir filtro de fechas
-//     const rangoFechas = {};
-//     if (desde && !isNaN(Date.parse(desde))) {
-//       rangoFechas.gte = new Date(desde);
-//     }
-//     if (hasta && !isNaN(Date.parse(hasta))) {
-//       rangoFechas.lte = new Date(new Date(hasta).setHours(23, 59, 59, 999))
-//     }
-
-//     // Construir filtro de usuariotest combinando nombre y idUsuario
-//     const filtroUsuarioTest = {};
-//     if (idUsuario) {
-//       filtroUsuarioTest.idUsuario = Number(idUsuario);
-//     }
-//     if (nombre) {
-//       filtroUsuarioTest.user = {
-//         name: {
-//           contains: nombre,
-//         },
-//       };
-//     }
-
-//     const filtros = {
-//       isActive: true,
-//       ...(Object.keys(filtroUsuarioTest).length > 0 && {
-//         usuariotest: filtroUsuarioTest,
-//       }),
-//       ...(personalidad && {
-//         personalidades: {
-//           nombre: {
-//             contains: personalidad,
-//           },
-//         },
-//       }),
-//       ...(Object.keys(rangoFechas).length > 0 && {
-//         createdAt: rangoFechas,
-//       }),
-//     };
-
-//     const resultados = await prisma.resultadosdetest.findMany({
-//       where: filtros,
-//       include: {
-//         personalidades: true,
-//         usuariotest: {
-//           include: {
-//             user: {
-//               select: {
-//                 id: true,
-//                 name: true,
-//                 email: true,
-//                 roleId: true,
-//                 isActive: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     });
-
-//     return res.json({
-//       isSuccess: true,
-//       message: "Tests obtenidos correctamente",
-//       data: resultados,
-//     });
-//   } catch (error) {
-//     console.error("Error al obtener tests completados:", error);
-//     return res.status(500).json({
-//       isSuccess: false,
-//       message: "Error del servidor",
-//     });
-//   }
-// };
 
 
 export const obtenerTestsCompletados = async (req, res) => {
@@ -341,6 +263,92 @@ export const obtenerTestsCompletados = async (req, res) => {
     });
   }
 };
+
+export const getDashboardResumen = async (req, res) => {
+  try {
+    const ahora = new Date();
+    const hace7Dias = new Date();
+    hace7Dias.setDate(ahora.getDate() - 7);
+
+    // Nuevos usuarios esta semana
+    const nuevosUsuarios = await prisma.user.count({
+      where: {
+        createdAt: {
+          gte: hace7Dias,
+          lte: ahora,
+        },
+        isActive: true,
+      },
+    });
+
+    // Tests completados esta semana
+    const testsCompletados = await prisma.resultadosdetest.count({
+      where: {
+        createdAt: {
+          gte: hace7Dias,
+          lte: ahora,
+        },
+        isActive: true,
+      },
+    });
+
+    // Reportes pendientes (suponiendo una tabla "reportes")
+    const reportesPendientes = await prisma.usuariotest.count({
+      where: {
+        testCompleted: true,
+      },
+    });
+
+    // Agrupar resultados MBTI de la semana por tipo
+    const resultadosMBTI = await prisma.resultadosdetest.groupBy({
+      by: ["idDicotomia"],
+      where: {
+        createdAt: {
+          gte: hace7Dias,
+          lte: ahora,
+        },
+        isActive: true,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    // Obtener nombres de personalidades
+    const nombresPersonalidades = await prisma.personalidades.findMany({
+      select: {
+        id: true,
+        nombre: true,
+      },
+    });
+
+    const resultadosPorPersonalidad = resultadosMBTI.map((r) => {
+      const nombre = nombresPersonalidades.find((p) => p.id === r.idDicotomia)?.nombre || "N/A";
+      return {
+        tipo: nombre,
+        cantidad: r._count.id,
+      };
+    });
+
+    res.json({
+      isSuccess: true,
+      message: "Resumen de dashboard generado correctamente",
+      data: {
+        nuevosUsuarios,
+        testsCompletados,
+        reportesPendientes,
+        resultadosMBTI: resultadosPorPersonalidad,
+      },
+    });
+  } catch (error) {
+    console.error("Error al cargar dashboard:", error);
+    res.status(500).json({
+      isSuccess: false,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 
 
 export const eliminarTestNoCompletado = async (req, res) => {

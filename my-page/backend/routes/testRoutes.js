@@ -1,6 +1,6 @@
 import { Router } from 'express';
 // import { getTestPersonality } from '../controllers/TestController.js';
-import { getTestPersonality, getRespuestasActivas, iniciarTest, verificarTest, eliminarTestNoCompletado, postRespuestas, obtenerTestsCompletados } from '../controllers/TestController.js';
+import { getTestPersonality, getRespuestasActivas, iniciarTest, verificarTest, eliminarTestNoCompletado, postRespuestas, obtenerTestsCompletados, getDashboardResumen } from '../controllers/TestController.js';
 
 const testRoutes = Router();
 
@@ -11,6 +11,7 @@ testRoutes.post('/verificarTest', verificarTest);
 testRoutes.delete('/eliminarTest', eliminarTestNoCompletado)
 testRoutes.post('/llenarTest',  postRespuestas)
 testRoutes.get('/completados', obtenerTestsCompletados)
+testRoutes.get('/resumenDashboard', getDashboardResumen)
 
 
 export default testRoutes;

@@ -17,6 +17,18 @@ export interface ResponseDataVerificarTestInterface {
   idUsuarioTest: number,
 }
 
+export interface resumenDashboard {
+  nuevosUsuarios: number,
+  testsCompletados: number,
+  reportesPendientes: number,
+  resultadosMBTI: resultadosMBTI[]
+}
+
+
+export interface resultadosMBTI {
+  tipo: string,
+  cantidad: number,
+}
 
 interface EliminarTestResponse {
   count: number;
@@ -28,6 +40,12 @@ export const crearTest = async (
   const response = await axios.post(`${VER_TEST_URL_API}/crearTest`, data);
   return response.data;
 };
+
+export const resumenDashboardApi = async(): Promise<ApiResponse<resumenDashboard>> => {
+  const response = await axios.get(`${VER_TEST_URL_API}/resumenDashboard`);
+  return response.data;
+}
+
 
 export const verificarTest = async (
   data: VerificarTestInterface
