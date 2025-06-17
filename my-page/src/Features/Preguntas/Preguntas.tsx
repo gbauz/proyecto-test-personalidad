@@ -132,6 +132,7 @@ const [datosResultado, setDatosResultado] = useState<{
   setDatosResultado(res.data);
   setMostrarModalResultado(true);
   localStorage.setItem("testCompleted", "true");
+  window.location.reload();
 }
  else {
         setError(res.message || "Error al enviar el test.");

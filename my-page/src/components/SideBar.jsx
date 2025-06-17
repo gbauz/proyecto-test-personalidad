@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 
 const SideBar = ({ isOpen }) => {
   const [rol, setRol] = useState("");
+  const [testCompletado, setTestCompletado] = useState("");
   const location = useLocation();
 
   useEffect(() => {
     const rolName = localStorage.getItem("rolName");
-    
+    const testCompleto = localStorage.getItem("testCompleted");
     setRol(rolName);
+    setTestCompletado(testCompleto)
   }, []);
 
   const navItemClass = (path) =>
@@ -69,24 +71,9 @@ const SideBar = ({ isOpen }) => {
               <BarChart2 className="w-5 h-5" />
               <span>Ver Test</span>
             </Link>
-            </li>
-              <li>
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    window.location.href = "/login";
-                  }}
-                  className={`${navItemClass("")} w-full text-left`}
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>Cerrar sesión</span>
-                </button>
-              </li>
-              
+            </li> 
             </>
           )}
-         
-          
           {rol === "Postulante" && (
             <>  
           <li>
@@ -100,13 +87,16 @@ const SideBar = ({ isOpen }) => {
               <BarChart2 className="w-5 h-5" />
               <span>FAQ</span>
             </Link>
-          </li>
-             <li>
+          </li>{testCompletado === "true" && (
+<li>
             <Link to="/ofertaspostulante" className={navItemClass("/ofertaspostulante")}>
               <BarChart2 className="w-5 h-5" />
               <span>Mis Postulaciones</span>
             </Link>
             </li>
+            )
+          }
+             
              <li>
             <Link to="/verTest" className={navItemClass("/verTest")}>
               <BarChart2 className="w-5 h-5" />
@@ -115,8 +105,6 @@ const SideBar = ({ isOpen }) => {
             </li>
           </>
           )}
-
-
            {rol === "Administrador" && (
             <>
               <li>
@@ -139,9 +127,7 @@ const SideBar = ({ isOpen }) => {
               </li>
             
             </>
-          )}
-
-          
+          )}      
         </ul>
       </nav>
 
