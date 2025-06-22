@@ -428,11 +428,22 @@ export const getDashboardResumen = async (req, res) => {
     });
 
     // Reportes pendientes (suponiendo una tabla "reportes")
+    // const reportesPendientes = await prisma.usuariotest.count({
+    //   where: {
+    //     testCompleted: true,
+    //   },
+    // });
+
     const reportesPendientes = await prisma.usuariotest.count({
-      where: {
-        testCompleted: true,
+  where: {
+    testCompleted: true,
+    user: {
+      role: {
+        name: "Postulante",
       },
-    });
+    },
+  },
+});
 
     // Agrupar resultados MBTI de la semana por tipo
     const resultadosMBTI = await prisma.resultadosdetest.groupBy({

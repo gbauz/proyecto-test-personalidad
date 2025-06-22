@@ -80,7 +80,7 @@ const SideBar = ({ isOpen }) => {
               <span>Ver Test</span>
             </Link>
             </li> 
-              <li>
+              {/* <li>
                 <button
                   onClick={() => {
                     localStorage.clear();
@@ -91,7 +91,7 @@ const SideBar = ({ isOpen }) => {
                   <LogOut className="w-5 h-5" />
                   <span>Cerrar sesión</span>
                 </button>
-              </li>
+              </li> */}
             </>
           )}
          
