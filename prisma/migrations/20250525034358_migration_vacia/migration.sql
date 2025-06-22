@@ -33,6 +33,10 @@ INSERT INTO `CategoriaDePreguntas` (nombre, orden, tipoTestId) VALUES
   ('Dimensión T/N', 3, 1),
   ('Dimensión J/P', 4, 1);
 
+INSERT INTO `user` (email, password, name, roleId) VALUES
+('juan@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Juan Pérez', 1),
+('ana@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Ana Gómez', 3),
+('admin@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Admin', 2);
 
 
   -- Insertar datos en la tabla 'Pregunta'
