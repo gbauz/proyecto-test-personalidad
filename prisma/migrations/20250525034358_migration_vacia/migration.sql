@@ -34,9 +34,9 @@ INSERT INTO `CategoriaDePreguntas` (nombre, orden, tipoTestId) VALUES
   ('Dimensión J/P', 4, 1);
 
 INSERT INTO `user` (email, password, name, roleId) VALUES
-('juan@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Juan Pérez', 1),
+('juan@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Juan Pérez', 2),
 ('ana@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Ana Gómez', 3),
-('admin@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Admin', 2);
+('admin@example.com', '$2b$10$orx2hszQqXsDOQiv3DDT3uixKNGCevNI.ve6Dcp0X.hrb/llS39Wy', 'Admin', 1);
 
 
   -- Insertar datos en la tabla 'Pregunta'
